@@ -492,15 +492,22 @@ if ($Source -eq "linkedin-pdf") {
     }
 
     New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-    $pdfTextLines = & pdftotext -layout $linkedInPdfPath -
-    $pdfText = $pdfTextLines -join [Environment]::NewLine
-    if ($LASTEXITCODE -ne 0) {
-        throw "pdftotext failed with exit code $LASTEXITCODE for $linkedInPdfPath"
+    $importScript = Join-Path $scriptRoot "import-linkedin-pdf.ps1"
+    if (-not (Test-Path $importScript)) {
+        throw "LinkedIn PDF importer not found: $importScript"
     }
 
-    Set-Content -Path $generatedLinkedInText -Value $pdfText -NoNewline
-    $parsedProfile = ConvertFrom-LinkedInPdfText $pdfText
-    $parsedProfile | ConvertTo-Json -Depth 8 | Set-Content -Path $generatedLinkedInJson
+    $importScriptContent = Get-Content -Raw $importScript
+    $importBlock = [scriptblock]::Create($importScriptContent)
+    & $importBlock -PdfPath $linkedInPdfPath -OutputDir $outputDir
+    if ($LASTEXITCODE -ne 0) {
+        throw "LinkedIn PDF importer failed with exit code $LASTEXITCODE for $linkedInPdfPath"
+    }
+
+    if (-not (Test-Path $generatedLinkedInJson)) {
+        throw "LinkedIn PDF importer did not create expected file: $generatedLinkedInJson"
+    }
+
     $linkedInProfileFile = $generatedLinkedInJson
 }
 
@@ -585,7 +592,8 @@ finally {
 
 Write-Host "==> Source: $Source"
 if ($Source -eq "linkedin-pdf") {
-    Write-Host "==> Extracted LinkedIn PDF text to build/linkedin-profile.txt"
+    Write-Host "==> Extracted LinkedIn PDF lines to build/linkedin-profile.lines.json"
+    Write-Host "==> Wrote readable LinkedIn PDF text to build/linkedin-profile.txt"
     Write-Host "==> Generated LinkedIn profile data at build/linkedin-profile.generated.json"
 }
 Write-Host "==> Generated build/custom_resume_template.tex from resume-template/$Template"
