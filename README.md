@@ -42,8 +42,7 @@ The main template at `resume-template/noob_resume_template.tex` reads contact va
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
 - `resume-template/noob_resume_template.tex` - main layout file that reads the variables from `user-info.tex`.
-- `user-resources/custom_resume_template.tex` - Overleaf-facing template copy; keep this stable for publishing.
-- `user-resources/custom_resume_template_user_info.tex` - companion template that reads `user-info.tex` for local user-info based builds.
+- `user-resources/custom_resume_template.tex` - Overleaf-facing template copy that also reads the variables from `user-info.tex`.
 
 To build the main resume from `resume-template/noob_resume_template.tex`:
 
@@ -75,7 +74,7 @@ Keep the template simple and ATS-friendly:
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
 - Use `scripts/build-resume.cmd` to compile the main variable-driven template into a timestamped PDF in `build/`.
-- Use `scripts/build-user-resume.cmd` only when you specifically want to compile `user-resources/custom_resume_template_user_info.tex`.
+- Use `scripts/build-user-resume.cmd` only when you specifically want to compile `user-resources/custom_resume_template.tex`.
 
 If local setup fails on a managed/corporate machine:
 

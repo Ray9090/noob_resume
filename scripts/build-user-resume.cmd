@@ -21,13 +21,13 @@ if "%JOB_NAME%"=="" (
 )
 
 pushd "%~dp0..\user-resources"
-pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" custom_resume_template_user_info.tex
+pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
 if not %ERRORLEVEL%==0 (
   echo ERROR: pdflatex failed. Check build\%JOB_NAME%.log for details.
   popd
   exit /b 1
 )
-pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" custom_resume_template_user_info.tex
+pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
 if not %ERRORLEVEL%==0 (
   echo ERROR: pdflatex failed on rerun. Check build\%JOB_NAME%.log for details.
   popd
