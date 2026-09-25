@@ -7,3 +7,5 @@ AGENTS.md
 *.out
 *.pdf
 *.synctex.gz
+!build/
+!build/noob_resume_template.pdf

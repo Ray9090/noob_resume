@@ -29,7 +29,7 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 1. Open `resume-template/noob_resume_template.tex`.
 2. Replace the sample John Doe details with your own information.
 3. Compile the file with `pdflatex` or Overleaf.
-4. Download the generated PDF and use it for job applications.
+4. Use the generated PDF from `build/noob_resume_template.pdf` for job applications.
 
 Overleaf template link:
 
@@ -46,7 +46,7 @@ Keep the template simple and ATS-friendly:
 - Keep the resume source as a single LaTeX file.
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
-- Use `scripts/build-resume.cmd` to compile the template after LaTeX is installed.
+- Use `scripts/build-resume.cmd` to compile the template into `build/noob_resume_template.pdf` after LaTeX is installed.
 
 If local setup fails on a managed/corporate machine:
 
@@ -61,6 +61,7 @@ If local setup fails on a managed/corporate machine:
 - ATS-friendly structure
 - Editable single-file LaTeX source in `resume-template/`
 - One-command Windows LaTeX setup script
+- Dedicated `build/` folder for the compiled PDF
 - Recruiter-readable headings and bullet points
 - Fictional sample data for easy replacement
 - No copied preview images or promotional assets
