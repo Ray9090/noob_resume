@@ -16,17 +16,12 @@ scripts\setup-latex.cmd
 ```
 
 ```powershell
-# Option 2: Prepare the environment and compile immediately
-scripts\setup-latex.cmd --build
-```
-
-```powershell
 # After setup, compile locally
 scripts\build-resume.cmd
 ```
 
 ```text
-Option 3: Upload resume-template/noob_resume_template.tex to Overleaf and compile it there.
+Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compile it there.
 ```
 
 ## Usage

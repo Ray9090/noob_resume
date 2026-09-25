@@ -109,8 +109,8 @@ where initexmf >nul 2>nul
 if not errorlevel 1 initexmf --set-config-value [MPM]AutoInstall=1
 
 if /I "%1"=="--build" (
-  call "%~dp0build-resume.cmd"
-  if not %ERRORLEVEL%==0 exit /b %ERRORLEVEL%
+  echo WARNING: setup-latex.cmd no longer builds the PDF.
+  echo WARNING: Run scripts\build-resume.cmd after setup completes.
 )
 
 echo ==^> LaTeX setup complete

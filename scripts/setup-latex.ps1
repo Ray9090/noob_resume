@@ -1,7 +1,3 @@
-param(
-    [switch]$BuildAfterInstall
-)
-
 $ErrorActionPreference = "Stop"
 
 function Write-Step {
@@ -80,28 +76,6 @@ function Assert-PdfLatex {
     & pdflatex --version
 }
 
-function Build-Resume {
-    $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
-    $templateDir = Join-Path $repoRoot "resume-template"
-    $templateFile = Join-Path $templateDir "noob_resume_template.tex"
-
-    if (-not (Test-Path $templateFile)) {
-        throw "Template file not found: $templateFile"
-    }
-
-    Write-Step "Compiling resume template"
-    Push-Location $templateDir
-    try {
-        & pdflatex -interaction=nonstopmode noob_resume_template.tex
-        if ($LASTEXITCODE -ne 0) {
-            throw "pdflatex failed with exit code $LASTEXITCODE. Check resume-template/noob_resume_template.log for details."
-        }
-    }
-    finally {
-        Pop-Location
-    }
-}
-
 Assert-SupportedHost
 
 if (Get-CommandPath "pdflatex") {
@@ -112,9 +86,5 @@ else {
 }
 
 Assert-PdfLatex
-
-if ($BuildAfterInstall) {
-    Build-Resume
-}
 
 Write-Step "LaTeX setup complete"
