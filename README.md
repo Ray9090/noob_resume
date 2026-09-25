@@ -21,7 +21,7 @@ scripts\build-resume.cmd
 ```
 
 ```powershell
-# Optional: compile the user-resources companion layout directly
+# Optional: compile the user-facing wrapper directly
 scripts\build-user-resume.cmd
 ```
 
@@ -38,11 +38,21 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 
 ## User Resources
 
-The main template at `resume-template/noob_resume_template.tex` reads contact variables from `user-resources/user-info.tex`.
+The reusable layout lives in `resume-template/noob_resume_template.tex`. It reads contact variables from `user-resources/user-info.tex`.
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
-- `resume-template/noob_resume_template.tex` - main layout file that reads the variables from `user-info.tex`.
-- `user-resources/custom_resume_template.tex` - Overleaf-facing template copy that also reads the variables from `user-info.tex`.
+- `resume-template/noob_resume_template.tex` - canonical resume layout file.
+- `user-resources/custom_resume_template.tex` - user-facing wrapper that loads the canonical layout from `resume-template/noob_resume_template.tex`.
+
+This keeps the template flow simple:
+
+```text
+user-resources/custom_resume_template.tex
+  -> resume-template/noob_resume_template.tex
+     -> user-resources/user-info.tex
+```
+
+When more layouts are added later, each layout should live in `resume-template/` and read the same user variables from `user-resources/user-info.tex`. The user-facing wrapper can then point to the layout the user wants to compile.
 
 To build the main resume from `resume-template/noob_resume_template.tex`:
 
@@ -70,11 +80,11 @@ Keep the template simple and ATS-friendly:
 
 - Use standard text sections.
 - Avoid images, graphics, and complex tables.
-- Keep the resume source as a single LaTeX file.
+- Keep canonical resume layouts in `resume-template/`.
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
 - Use `scripts/build-resume.cmd` to compile the main variable-driven template into a timestamped PDF in `build/`.
-- Use `scripts/build-user-resume.cmd` only when you specifically want to compile `user-resources/custom_resume_template.tex`.
+- Use `scripts/build-user-resume.cmd` only when you specifically want to compile the user-facing wrapper at `user-resources/custom_resume_template.tex`.
 
 If local setup fails on a managed/corporate machine:
 
