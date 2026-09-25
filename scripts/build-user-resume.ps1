@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $templateDir = Join-Path $repoRoot "user-resources"
-$templateFile = Join-Path $templateDir "custom_resume_template.tex"
+$templateFile = Join-Path $templateDir "custom_resume_template_user_info.tex"
 $userInfoFile = Join-Path $templateDir "user-info.tex"
 $outputDir = Join-Path $repoRoot "build"
 
