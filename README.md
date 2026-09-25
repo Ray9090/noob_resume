@@ -21,7 +21,7 @@ scripts\build-resume.cmd
 ```
 
 ```powershell
-# Compile the user-editable template
+# Optional: compile the copied user-resources layout directly
 scripts\build-user-resume.cmd
 ```
 
@@ -31,22 +31,23 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 
 ## Usage
 
-1. Open `resume-template/noob_resume_template.tex`.
-2. Replace the sample John Doe details with your own information.
-3. Compile the file with `pdflatex` or Overleaf.
-4. Use the generated PDF from `build/noob_resume_template.pdf` for job applications.
+1. Open `user-resources/user-info.tex`.
+2. Replace the sample contact details with your own information.
+3. Run `scripts\build-resume.cmd`.
+4. Use the newest timestamped PDF from `build/` for job applications.
 
 ## User Resources
 
-The `user-resources/` folder contains a more flexible version of the resume template:
+The main template at `resume-template/noob_resume_template.tex` reads contact variables from `user-resources/user-info.tex`.
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
-- `user-resources/custom_resume_template.tex` - layout file that reads the variables from `user-info.tex`.
+- `resume-template/noob_resume_template.tex` - main layout file that reads the variables from `user-info.tex`.
+- `user-resources/custom_resume_template.tex` - optional copied layout file for experiments.
 
-To build the user-editable template:
+To build the main resume from `resume-template/noob_resume_template.tex`:
 
 ```powershell
-scripts\build-user-resume.cmd
+scripts\build-resume.cmd
 ```
 
 The PDF is generated in `build/` using the resume name and a timestamp:
@@ -55,7 +56,7 @@ The PDF is generated in `build/` using the resume name and a timestamp:
 build/John_Roe_20260925-113500.pdf
 ```
 
-If you update `user-resources/user-info.tex`, open the newest timestamped PDF from `build/`. The file `build/noob_resume_template.pdf` is produced by the original non-variable template and will not reflect `user-info.tex` changes.
+If you update `user-resources/user-info.tex`, run `scripts\build-resume.cmd` again and open the newest timestamped PDF from `build/`.
 
 Overleaf template link:
 
@@ -72,8 +73,8 @@ Keep the template simple and ATS-friendly:
 - Keep the resume source as a single LaTeX file.
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
-- Use `scripts/build-resume.cmd` to compile the template into `build/noob_resume_template.pdf` after LaTeX is installed.
-- Use `scripts/build-user-resume.cmd` to compile the variable-driven template into a timestamped PDF in `build/`.
+- Use `scripts/build-resume.cmd` to compile the main variable-driven template into a timestamped PDF in `build/`.
+- Use `scripts/build-user-resume.cmd` only when you specifically want to compile the copied layout in `user-resources/`.
 
 If local setup fails on a managed/corporate machine:
 

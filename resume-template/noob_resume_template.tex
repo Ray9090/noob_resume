@@ -116,6 +116,9 @@
 \newcommand{\resumeItemListStart}{\begin{itemize}}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
+% User-editable profile variables.
+\input{../user-resources/user-info.tex}
+
 %-------------------------------------------
 %%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -123,13 +126,13 @@
 
 %----------HEADING----------
 \begin{center}
-    {\Huge \scshape John Doe} \\ \vspace{8pt}
+    {\Huge \scshape \ResumeName} \\ \vspace{8pt}
     
     \small 
-    \href{tel:+15551234567}{\raisebox{-0.1\height}\faPhone\ \underline{+1 555 123 4567}} ~ $|$ ~
-    \href{mailto:john.doe@example.com}{\raisebox{-0.2\height}\faEnvelope\ \underline{john.doe@example.com}} ~ $|$ ~
-    \href{https://linkedin.com/in/johndoe}{\raisebox{-0.2\height}\faLinkedin\ \underline{linkedin.com/in/johndoe}} ~ $|$ ~
-    \href{https://github.com/johndoe}{\raisebox{-0.2\height}\faGithub\ \underline{github.com/johndoe}}
+    \href{tel:\ResumePhoneLink}{\raisebox{-0.1\height}\faPhone\ \underline{\ResumePhoneDisplay}} ~ $|$ ~
+    \href{mailto:\ResumeEmail}{\raisebox{-0.2\height}\faEnvelope\ \underline{\ResumeEmail}} ~ $|$ ~
+    \href{\ResumeLinkedInUrl}{\raisebox{-0.2\height}\faLinkedin\ \underline{\ResumeLinkedInDisplay}} ~ $|$ ~
+    \href{\ResumeGitHubUrl}{\raisebox{-0.2\height}\faGithub\ \underline{\ResumeGitHubDisplay}}
     
     \vspace{-8pt}
 \end{center}
