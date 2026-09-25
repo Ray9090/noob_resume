@@ -12,16 +12,17 @@ Use one of these options:
 
 ```powershell
 # Option 1: Compile locally after installing MiKTeX or TeX Live
-pdflatex noob_resume.tex
+cd resume-template
+pdflatex noob_resume_template.tex
 ```
 
 ```text
-Option 2: Upload noob_resume.tex to Overleaf and compile it there.
+Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compile it there.
 ```
 
 ## Usage
 
-1. Open `noob_resume.tex`.
+1. Open `resume-template/noob_resume_template.tex`.
 2. Replace the sample John Doe details with your own information.
 3. Compile the file with `pdflatex` or Overleaf.
 4. Download the generated PDF and use it for job applications.
@@ -45,7 +46,7 @@ Keep the template simple and ATS-friendly:
 
 - One-page software engineering resume layout
 - ATS-friendly structure
-- Editable single-file LaTeX source
+- Editable single-file LaTeX source in `resume-template/`
 - Recruiter-readable headings and bullet points
 - Fictional sample data for easy replacement
 - No copied preview images or promotional assets

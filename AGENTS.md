@@ -11,7 +11,8 @@ Noob Resume is a clean, ATS-friendly LaTeX resume template project for software 
 # Important Commands
 
 ```powershell
-pdflatex noob_resume.tex
+cd resume-template
+pdflatex noob_resume_template.tex
 ```
 
 Run this from the repository root after installing a LaTeX distribution locally.
@@ -19,7 +20,7 @@ Run this from the repository root after installing a LaTeX distribution locally.
 # Repository Structure
 
 - `README.md` - Project overview, usage, development, support, and license notes.
-- `noob_resume.tex` - Main editable LaTeX resume template.
+- `resume-template/noob_resume_template.tex` - Main editable LaTeX resume template.
 - `LICENSE` - MIT license and attribution notice.
 - `.project-metadata.yml` - Project classification metadata.
 
