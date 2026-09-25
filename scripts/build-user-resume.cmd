@@ -13,7 +13,15 @@ if not %ERRORLEVEL%==0 (
 set "SOURCE_NAME=%~1"
 if "%SOURCE_NAME%"=="" set "SOURCE_NAME=user-info"
 
-set "TEMPLATE_NAME=%~2"
+set "LINKEDIN_PDF_PATH="
+set "TEMPLATE_NAME="
+if /I "%SOURCE_NAME%"=="linkedin-pdf" (
+  set "LINKEDIN_PDF_PATH=%~2"
+  set "TEMPLATE_NAME=%~3"
+) else (
+  set "TEMPLATE_NAME=%~2"
+)
+
 if /I "%SOURCE_NAME:~-4%"==".tex" (
   set "TEMPLATE_NAME=%SOURCE_NAME%"
   set "SOURCE_NAME=user-info"
@@ -21,7 +29,7 @@ if /I "%SOURCE_NAME:~-4%"==".tex" (
 if "%TEMPLATE_NAME%"=="" set "TEMPLATE_NAME=noob_resume_template.tex"
 
 set "NOOB_SCRIPT_DIR=%~dp0"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$script = Get-Content -Raw '%~dp0build-user-resume.ps1'; $block = [scriptblock]::Create($script); & $block -Source '%SOURCE_NAME%' -Template '%TEMPLATE_NAME%'"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$script = Get-Content -Raw '%~dp0build-user-resume.ps1'; $block = [scriptblock]::Create($script); & $block -Source '%SOURCE_NAME%' -Template '%TEMPLATE_NAME%' -LinkedInPdf '%LINKEDIN_PDF_PATH%'"
 exit /b %ERRORLEVEL%
 
 :add_latex_paths
