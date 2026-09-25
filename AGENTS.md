@@ -6,21 +6,33 @@ Noob Resume is a clean, ATS-friendly LaTeX resume template project for software 
 
 - Ensure `.project-metadata.yml` exists and is classified as `public` or `internal` before making changes.
 - Use Overleaf or a local LaTeX installation such as TeX Live or MiKTeX to compile the template.
+- Use `scripts/setup-latex.cmd` to prepare a local Windows LaTeX environment.
 - No generated PDFs, preview images, or copied promotional assets should be committed.
 
 # Important Commands
 
 ```powershell
-cd resume-template
-pdflatex noob_resume_template.tex
+scripts\setup-latex.cmd
 ```
 
-Run this from the repository root after installing a LaTeX distribution locally.
+```powershell
+scripts\setup-latex.cmd --build
+```
+
+```powershell
+scripts\build-resume.cmd
+```
+
+Run these from the repository root.
 
 # Repository Structure
 
 - `README.md` - Project overview, usage, development, support, and license notes.
 - `resume-template/noob_resume_template.tex` - Main editable LaTeX resume template.
+- `scripts/setup-latex.cmd` - Windows setup script for installing and validating `pdflatex`.
+- `scripts/build-resume.cmd` - Local build script for compiling the resume PDF.
+- `scripts/setup-latex.ps1` - PowerShell setup script for environments that allow local scripts.
+- `scripts/build-resume.ps1` - PowerShell build script for environments that allow local scripts.
 - `LICENSE` - MIT license and attribution notice.
 - `.project-metadata.yml` - Project classification metadata.
 
@@ -35,4 +47,6 @@ Run this from the repository root after installing a LaTeX distribution locally.
 
 - Local compilation requires LaTeX packages including `fontawesome5`, `tikz`, `tabularx`, and `ragged2e`.
 - If `pdflatex` is unavailable locally, compile in Overleaf instead.
+- On Windows, use `scripts/setup-latex.cmd` to install MiKTeX through `winget`, the official MiKTeX installer, or Chocolatey.
+- On managed/corporate machines, installer downloads may be blocked and Chocolatey may require an elevated shell or package-source credentials.
 - Do not add unpublished Overleaf links until the template is actually published there.
