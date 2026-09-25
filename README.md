@@ -21,7 +21,7 @@ scripts\build-resume.cmd
 ```
 
 ```powershell
-# Compile the user-customized resume from user-resources/user-info.tex
+# Generate and compile a user-customized resume
 scripts\build-user-resume.cmd
 ```
 
@@ -42,7 +42,7 @@ The ready-made layout lives in `resume-template/noob_resume_template.tex`. It co
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
 - `resume-template/noob_resume_template.tex` - standalone ready-made template with sample contact details.
-- `user-resources/custom_resume_template.tex` - user-customized copy of the template that reads variables from `user-resources/user-info.tex`.
+- `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 
 This keeps the template flow simple:
 
@@ -50,12 +50,22 @@ This keeps the template flow simple:
 resume-template/noob_resume_template.tex
   -> standalone ready-made template
 
-user-resources/custom_resume_template.tex
-  -> copied/customizable template layout
-  -> user-resources/user-info.tex
+scripts/build-user-resume.cmd
+  -> copies a template from resume-template/
+  -> generates build/custom_resume_template.tex
+  -> injects user-resources/user-info.tex
+  -> compiles the customized PDF
 ```
 
-When more layouts are added later, each ready-made layout should live in `resume-template/`. A matching custom template can be placed in `user-resources/` and changed to read the same user variables from `user-resources/user-info.tex`.
+When more layouts are added later, each ready-made layout should live in `resume-template/` and include the profile block markers used by the build script:
+
+```latex
+% <NOOB_PROFILE_START>
+% default profile values
+% <NOOB_PROFILE_END>
+```
+
+The custom build replaces that marked block with `user-resources/user-info.tex` at build time. No permanent custom template file is required.
 
 To build the ready-made template from `resume-template/noob_resume_template.tex`:
 
@@ -63,10 +73,16 @@ To build the ready-made template from `resume-template/noob_resume_template.tex`
 scripts\build-resume.cmd
 ```
 
-To build the customized resume from `user-resources/custom_resume_template.tex`:
+To build the customized resume from the default ready-made template plus `user-resources/user-info.tex`:
 
 ```powershell
 scripts\build-user-resume.cmd
+```
+
+To build from a different template in `resume-template/`, pass the template filename:
+
+```powershell
+scripts\build-user-resume.cmd another_template.tex
 ```
 
 The customized PDF is generated in `build/` using the resume name and a timestamp:
@@ -93,7 +109,7 @@ Keep the template simple and ATS-friendly:
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
 - Use `scripts/build-resume.cmd` to compile the standalone ready-made template into a timestamped PDF in `build/`.
-- Use `scripts/build-user-resume.cmd` to compile the customized template at `user-resources/custom_resume_template.tex` with values from `user-resources/user-info.tex`.
+- Use `scripts/build-user-resume.cmd` to generate `build/custom_resume_template.tex` from a ready-made template and compile it with values from `user-resources/user-info.tex`.
 
 If local setup fails on a managed/corporate machine:
 

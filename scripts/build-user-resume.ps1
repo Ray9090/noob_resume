@@ -1,17 +1,22 @@
+param(
+    [string]$Template = "noob_resume_template.tex"
+)
+
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
-$templateDir = Join-Path $repoRoot "user-resources"
-$templateFile = Join-Path $templateDir "custom_resume_template.tex"
-$userInfoFile = Join-Path $templateDir "user-info.tex"
+$templateDir = Join-Path $repoRoot "resume-template"
+$sourceTemplate = Join-Path $templateDir $Template
+$userInfoFile = Join-Path $repoRoot "user-resources\user-info.tex"
 $outputDir = Join-Path $repoRoot "build"
+$generatedTemplate = Join-Path $outputDir "custom_resume_template.tex"
 
 if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
     throw "pdflatex is not installed or not available in PATH. Run: powershell -ExecutionPolicy Bypass -File scripts/setup-latex.ps1"
 }
 
-if (-not (Test-Path $templateFile)) {
-    throw "Template file not found: $templateFile"
+if (-not (Test-Path $sourceTemplate)) {
+    throw "Template file not found: $sourceTemplate"
 }
 
 if (-not (Test-Path $userInfoFile)) {
@@ -34,10 +39,24 @@ $jobName = "${safeName}_${timestamp}"
 
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
-Push-Location $templateDir
+$templateContent = Get-Content -Raw $sourceTemplate
+$profilePattern = "(?s)% <NOOB_PROFILE_START>.*?% <NOOB_PROFILE_END>"
+$profileReplacement = @"
+% User-editable profile variables.
+\input{../user-resources/user-info.tex}
+"@
+
+if ($templateContent -notmatch $profilePattern) {
+    throw "Template profile block markers were not found in $sourceTemplate. Add % <NOOB_PROFILE_START> and % <NOOB_PROFILE_END> around the profile defaults."
+}
+
+$generatedContent = [regex]::Replace($templateContent, $profilePattern, $profileReplacement)
+Set-Content -Path $generatedTemplate -Value $generatedContent -NoNewline
+
+Push-Location $outputDir
 try {
     for ($run = 1; $run -le 2; $run++) {
-        pdflatex -interaction=nonstopmode -jobname="$jobName" -output-directory="$outputDir" custom_resume_template.tex
+        pdflatex -interaction=nonstopmode -jobname="$jobName" custom_resume_template.tex
         if ($LASTEXITCODE -ne 0) {
             throw "pdflatex failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
         }
@@ -47,4 +66,5 @@ finally {
     Pop-Location
 }
 
+Write-Host "==> Generated build/custom_resume_template.tex from resume-template/$Template"
 Write-Host "==> User resume PDF built at build/$jobName.pdf"
