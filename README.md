@@ -52,8 +52,10 @@ The ready-made layout lives in `resume-template/noob_resume_template.tex`. It co
 - `resume-template/noob_resume_template.tex` - standalone ready-made template with sample contact details.
 - `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 - `build/profile-info.tex` - generated during LinkedIn-source builds; do not edit or commit it.
-- `build/linkedin-profile.txt` - generated raw text extracted from a LinkedIn PDF.
-- `build/linkedin-profile.generated.json` - generated best-effort profile data parsed from a LinkedIn PDF.
+- `build/linkedin-profile.bbox.html` - generated coordinate-aware PDF extraction from `pdftotext -bbox-layout`; useful for parser debugging.
+- `build/linkedin-profile.lines.json` - generated normalized line data with page, column, coordinates, and text.
+- `build/linkedin-profile.txt` - generated readable line-by-line text extracted from a LinkedIn PDF.
+- `build/linkedin-profile.generated.json` - generated profile data classified from the normalized LinkedIn PDF lines.
 
 This keeps the template flow simple:
 
@@ -102,7 +104,7 @@ To build from a LinkedIn profile PDF saved by the user:
 scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf
 ```
 
-The LinkedIn options read local data only; they do not log in to LinkedIn or scrape a profile page. The `linkedin-pdf` source extracts text with `pdftotext`, writes `build/linkedin-profile.txt`, generates `build/linkedin-profile.generated.json`, and compiles from that generated data. PDF parsing is best-effort because LinkedIn profile PDFs use a two-column layout, so review the generated JSON/PDF and refine with the JSON source if needed.
+The LinkedIn options read local data only; they do not log in to LinkedIn or scrape a profile page. The `linkedin-pdf` source uses a two-stage importer: first it extracts coordinate-aware PDF lines with `pdftotext -bbox-layout`, then it classifies those lines into contact details, summary, skills, experience, and education. It writes `build/linkedin-profile.bbox.html`, `build/linkedin-profile.lines.json`, `build/linkedin-profile.txt`, and `build/linkedin-profile.generated.json`, then compiles from the generated JSON. PDF parsing is still best-effort because LinkedIn can change the export layout, so review the generated JSON/PDF and refine with the JSON source if needed.
 
 To build from a different template in `resume-template/`, pass the template filename:
 
@@ -138,7 +140,7 @@ Keep the template simple and ATS-friendly:
 - Use `scripts/build-resume.cmd` to compile the standalone ready-made template into a timestamped PDF in `build/`.
 - Use `scripts/build-user-resume.cmd user-info` to generate `build/custom_resume_template.tex` from a ready-made template and compile it with values from `user-resources/user-info.tex`.
 - Use `scripts/build-user-resume.cmd linkedin` to generate the resume from `user-resources/linkedin-profile.json`.
-- Use `scripts/build-user-resume.cmd linkedin-pdf path\to\Profile.pdf` to generate a best-effort resume from a locally saved LinkedIn profile PDF.
+- Use `scripts/build-user-resume.cmd linkedin-pdf path\to\Profile.pdf` to generate a resume from a locally saved LinkedIn profile PDF through the coordinate-aware line extractor and classifier.
 
 If local setup fails on a managed/corporate machine:
 
