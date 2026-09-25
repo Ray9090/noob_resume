@@ -16,12 +16,12 @@ scripts\setup-latex.cmd
 ```
 
 ```powershell
-# After setup, compile locally
+# After setup, compile the ready-made template locally
 scripts\build-resume.cmd
 ```
 
 ```powershell
-# Optional: compile the user-facing wrapper directly
+# Compile the user-customized resume from user-resources/user-info.tex
 scripts\build-user-resume.cmd
 ```
 
@@ -33,40 +33,49 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 
 1. Open `user-resources/user-info.tex`.
 2. Replace the sample contact details with your own information.
-3. Run `scripts\build-resume.cmd`.
+3. Run `scripts\build-user-resume.cmd`.
 4. Use the newest timestamped PDF from `build/` for job applications.
 
 ## User Resources
 
-The reusable layout lives in `resume-template/noob_resume_template.tex`. It reads contact variables from `user-resources/user-info.tex`.
+The ready-made layout lives in `resume-template/noob_resume_template.tex`. It contains its own sample contact details and can compile by itself.
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
-- `resume-template/noob_resume_template.tex` - canonical resume layout file.
-- `user-resources/custom_resume_template.tex` - user-facing wrapper that loads the canonical layout from `resume-template/noob_resume_template.tex`.
+- `resume-template/noob_resume_template.tex` - standalone ready-made template with sample contact details.
+- `user-resources/custom_resume_template.tex` - user-customized copy of the template that reads variables from `user-resources/user-info.tex`.
 
 This keeps the template flow simple:
 
 ```text
+resume-template/noob_resume_template.tex
+  -> standalone ready-made template
+
 user-resources/custom_resume_template.tex
-  -> resume-template/noob_resume_template.tex
-     -> user-resources/user-info.tex
+  -> copied/customizable template layout
+  -> user-resources/user-info.tex
 ```
 
-When more layouts are added later, each layout should live in `resume-template/` and read the same user variables from `user-resources/user-info.tex`. The user-facing wrapper can then point to the layout the user wants to compile.
+When more layouts are added later, each ready-made layout should live in `resume-template/`. A matching custom template can be placed in `user-resources/` and changed to read the same user variables from `user-resources/user-info.tex`.
 
-To build the main resume from `resume-template/noob_resume_template.tex`:
+To build the ready-made template from `resume-template/noob_resume_template.tex`:
 
 ```powershell
 scripts\build-resume.cmd
 ```
 
-The PDF is generated in `build/` using the resume name and a timestamp:
+To build the customized resume from `user-resources/custom_resume_template.tex`:
+
+```powershell
+scripts\build-user-resume.cmd
+```
+
+The customized PDF is generated in `build/` using the resume name and a timestamp:
 
 ```text
 build/John_Roe_20260925-113500.pdf
 ```
 
-If you update `user-resources/user-info.tex`, run `scripts\build-resume.cmd` again and open the newest timestamped PDF from `build/`.
+If you update `user-resources/user-info.tex`, run `scripts\build-user-resume.cmd` again and open the newest timestamped PDF from `build/`.
 
 Overleaf template link:
 
@@ -83,8 +92,8 @@ Keep the template simple and ATS-friendly:
 - Keep canonical resume layouts in `resume-template/`.
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
-- Use `scripts/build-resume.cmd` to compile the main variable-driven template into a timestamped PDF in `build/`.
-- Use `scripts/build-user-resume.cmd` only when you specifically want to compile the user-facing wrapper at `user-resources/custom_resume_template.tex`.
+- Use `scripts/build-resume.cmd` to compile the standalone ready-made template into a timestamped PDF in `build/`.
+- Use `scripts/build-user-resume.cmd` to compile the customized template at `user-resources/custom_resume_template.tex` with values from `user-resources/user-info.tex`.
 
 If local setup fails on a managed/corporate machine:
 

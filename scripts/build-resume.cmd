@@ -13,12 +13,8 @@ if not %ERRORLEVEL%==0 (
 set "OUTPUT_DIR=%~dp0..\build"
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 
-for /f "usebackq delims=" %%A in (`powershell.exe -NoProfile -Command "$scriptDir='%~dp0'; $repoRoot=Resolve-Path (Join-Path $scriptDir '..'); $userInfo=Join-Path $repoRoot 'user-resources\user-info.tex'; $raw=Get-Content -Raw $userInfo; $name='noob_resume'; if ($raw -match '\\newcommand\{\\ResumeName\}\{([^}]*)\}') { $name=$Matches[1] }; $safe=($name -replace '[^A-Za-z0-9]+','_').Trim('_'); if ([string]::IsNullOrWhiteSpace($safe)) { $safe='noob_resume' }; $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'; Write-Output ($safe + '_' + $stamp)"`) do set "JOB_NAME=%%A"
-
-if "%JOB_NAME%"=="" (
-  echo ERROR: Could not create output file name from user-resources\user-info.tex.
-  exit /b 1
-)
+for /f "usebackq delims=" %%A in (`powershell.exe -NoProfile -Command "Get-Date -Format 'yyyyMMdd-HHmmss'"`) do set "STAMP=%%A"
+set "JOB_NAME=noob_resume_template_%STAMP%"
 
 pushd "%~dp0..\resume-template"
 pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" noob_resume_template.tex
