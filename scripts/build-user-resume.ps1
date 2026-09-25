@@ -6,7 +6,12 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$scriptRoot = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
+    $scriptRoot = $env:NOOB_SCRIPT_DIR
+}
+
+$repoRoot = Resolve-Path (Join-Path $scriptRoot "..")
 $templateDir = Join-Path $repoRoot "resume-template"
 $sourceTemplate = Join-Path $templateDir $Template
 $userInfoFile = Join-Path $repoRoot "user-resources\user-info.tex"
@@ -57,6 +62,7 @@ New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
 $templateContent = Get-Content -Raw $sourceTemplate
 $profilePattern = "(?s)% <NOOB_PROFILE_START>.*?% <NOOB_PROFILE_END>"
+$contentPattern = "(?s)% <NOOB_CONTENT_START>.*?% <NOOB_CONTENT_END>"
 $profileReplacement = "% User-editable profile variables."
 
 if ($Source -eq "user-info") {
@@ -81,6 +87,112 @@ else {
         return $escaped
     }
 
+    function Add-ResumeItems {
+        param([System.Collections.IEnumerable]$Items)
+
+        $lines = @("      \resumeItemListStart")
+        foreach ($item in $Items) {
+            $lines += "        \resumeItem{$(ConvertTo-LatexValue $item)}"
+        }
+        $lines += "      \resumeItemListEnd"
+        return $lines
+    }
+
+    function ConvertTo-LinkedInContent {
+        param($Profile)
+
+        $lines = @(
+            "% <NOOB_CONTENT_START>",
+            "% Generated from user-resources/linkedin-profile.json",
+            "%-----------SUMMARY-----------",
+            "\section{Professional Summary}",
+            "\begin{justify}",
+            "\small{$(ConvertTo-LatexValue $Profile.summary)}",
+            "\end{justify}",
+            "\vspace{-10pt}",
+            "",
+            "%-----------TECHNICAL SKILLS-----------",
+            "\section{Technical Skills}",
+            "\begin{itemize}[leftmargin=0.15in, label={}]",
+            "    \small{\item{"
+        )
+
+        if ($Profile.skills) {
+            foreach ($skill in $Profile.skills.PSObject.Properties) {
+                $lines += "        \textbf{$(ConvertTo-LatexValue $skill.Name)}{: $(ConvertTo-LatexValue $skill.Value)} \\"
+            }
+        }
+
+        $lines += @(
+            "    }}",
+            "\end{itemize}",
+            "\vspace{-16pt}",
+            "",
+            "%-----------EXPERIENCE-----------",
+            "\section{Experience}",
+            "\resumeSubHeadingListStart"
+        )
+
+        foreach ($role in @($Profile.experience)) {
+            $companyLine = "$(ConvertTo-LatexValue $role.company)"
+            if ($role.location) {
+                $companyLine += " -- $(ConvertTo-LatexValue $role.location)"
+            }
+            $lines += ""
+            $lines += "    \resumeSubheading"
+            $lines += "      {$companyLine}{$(ConvertTo-LatexValue $role.dates)}"
+            $lines += "      {$(ConvertTo-LatexValue $role.title)}{}"
+            $lines += Add-ResumeItems $role.items
+        }
+
+        $lines += @(
+            "",
+            "\resumeSubHeadingListEnd",
+            "\vspace{-16pt}",
+            "",
+            "%-----------PROJECTS-----------",
+            "\section{Projects}",
+            "\resumeSubHeadingListStart"
+        )
+
+        foreach ($project in @($Profile.projects)) {
+            $projectLine = "\textbf{$(ConvertTo-LatexValue $project.name)}"
+            if ($project.technologies) {
+                $projectLine += " | \emph{$(ConvertTo-LatexValue $project.technologies)}"
+            }
+            $lines += ""
+            $lines += "    \resumeProjectHeading"
+            $lines += "          {$projectLine}{$(ConvertTo-LatexValue $project.dates)}"
+            $lines += Add-ResumeItems $project.items
+        }
+
+        $lines += @(
+            "",
+            "\resumeSubHeadingListEnd",
+            "\vspace{-16pt}",
+            "",
+            "%-----------EDUCATION-----------",
+            "\section{Education}",
+            "\resumeSubHeadingListStart"
+        )
+
+        foreach ($education in @($Profile.education)) {
+            $lines += ""
+            $lines += "    \resumeSubheading"
+            $lines += "      {$(ConvertTo-LatexValue $education.school)}{$(ConvertTo-LatexValue $education.dates)}"
+            $lines += "      {$(ConvertTo-LatexValue $education.degree)}{$(ConvertTo-LatexValue $education.location)}"
+        }
+
+        $lines += @(
+            "",
+            "\resumeSubHeadingListEnd",
+            "\vspace{-16pt}",
+            "% <NOOB_CONTENT_END>"
+        )
+
+        return $lines -join [Environment]::NewLine
+    }
+
     $profileLines = @(
         "% Generated from user-resources/linkedin-profile.json",
         "\newcommand{\ResumeName}{$(ConvertTo-LatexValue $linkedInProfile.name)}",
@@ -101,6 +213,13 @@ if ($templateContent -notmatch $profilePattern) {
 }
 
 $generatedContent = [regex]::Replace($templateContent, $profilePattern, $profileReplacement)
+if ($Source -eq "linkedin") {
+    if ($generatedContent -notmatch $contentPattern) {
+        throw "Template content block markers were not found in $sourceTemplate. Add % <NOOB_CONTENT_START> and % <NOOB_CONTENT_END> around the resume body."
+    }
+
+    $generatedContent = [regex]::Replace($generatedContent, $contentPattern, (ConvertTo-LinkedInContent $linkedInProfile))
+}
 Set-Content -Path $generatedTemplate -Value $generatedContent -NoNewline
 
 Push-Location $outputDir

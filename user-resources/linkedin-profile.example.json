@@ -1,0 +1,70 @@
+{
+  "name": "John Doe",
+  "phoneDisplay": "+1 555 123 4567",
+  "phoneLink": "+15551234567",
+  "email": "john.doe@example.com",
+  "linkedinDisplay": "linkedin.com/in/johndoe",
+  "linkedinUrl": "https://www.linkedin.com/in/johndoe",
+  "githubDisplay": "github.com/johndoe",
+  "githubUrl": "https://github.com/johndoe",
+  "summary": "Software engineer with experience building web applications, APIs, automation workflows, and data-driven tools. Strong background in frontend and backend development, collaborative delivery, and improving user-facing product quality.",
+  "skills": {
+    "Programming Languages": "TypeScript, JavaScript, Python, Java, SQL, HTML, CSS",
+    "Frameworks & Libraries": "React.js, Next.js, Node.js, Express.js, Redux, Tailwind CSS",
+    "Developer Tools": "Git, GitHub, Docker, Postman, VS Code, Jira",
+    "Databases": "PostgreSQL, MySQL, MongoDB, Redis",
+    "Cloud & DevOps": "AWS, Vercel, Netlify, GitHub Actions, CI/CD, Linux"
+  },
+  "experience": [
+    {
+      "company": "Example Software Company",
+      "location": "Remote",
+      "dates": "2024 -- Present",
+      "title": "Software Engineer",
+      "items": [
+        "Built reusable web application components and API integrations for customer-facing workflows.",
+        "Improved application reliability and performance through testing, debugging, and code review.",
+        "Collaborated with product and design partners to deliver accessible user experiences."
+      ]
+    },
+    {
+      "company": "Example Technology Lab",
+      "location": "Remote",
+      "dates": "2022 -- 2024",
+      "title": "Junior Software Developer",
+      "items": [
+        "Implemented full-stack features using modern web technologies and relational databases.",
+        "Automated manual reporting tasks and improved recurring operational workflows.",
+        "Wrote tests and documentation to improve release confidence."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Portfolio Platform",
+      "technologies": "React, TypeScript, Node.js, PostgreSQL",
+      "dates": "",
+      "items": [
+        "Built a responsive portfolio and project tracking application with authentication and reusable components.",
+        "Designed database schemas and API routes for efficient project browsing."
+      ]
+    },
+    {
+      "name": "Analytics Dashboard",
+      "technologies": "Next.js, Chart.js, Express.js, MongoDB",
+      "dates": "",
+      "items": [
+        "Created an interactive dashboard with charts, filters, and saved report views.",
+        "Optimized frontend rendering and API pagination for larger datasets."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "State University",
+      "dates": "2018 -- 2022",
+      "degree": "Bachelor of Science in Computer Science",
+      "location": ""
+    }
+  ]
+}

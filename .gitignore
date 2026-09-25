@@ -1,5 +1,6 @@
 .project-metadata.yml
 AGENTS.md
+user-resources/linkedin-profile.json
 *.aux
 *.fdb_latexmk
 *.fls

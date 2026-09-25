@@ -38,7 +38,7 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 
 1. Choose a profile source: `user-info` or `linkedin`.
 2. For `user-info`, edit `user-resources/user-info.tex`.
-3. For `linkedin`, edit `user-resources/linkedin-profile.json` with details copied or exported from your LinkedIn profile.
+3. For `linkedin`, copy `user-resources/linkedin-profile.example.json` to `user-resources/linkedin-profile.json`, then edit it with details copied or exported from your LinkedIn profile.
 4. Run `scripts\build-user-resume.cmd user-info` or `scripts\build-user-resume.cmd linkedin`.
 5. Use the newest timestamped PDF from `build/` for job applications.
 
@@ -47,7 +47,8 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 The ready-made layout lives in `resume-template/noob_resume_template.tex`. It contains its own sample contact details and can compile by itself.
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
-- `user-resources/linkedin-profile.json` - edit this file with LinkedIn-derived profile data when using the `linkedin` source.
+- `user-resources/linkedin-profile.example.json` - tracked example for LinkedIn-style profile data.
+- `user-resources/linkedin-profile.json` - local private LinkedIn-derived profile data; ignored by Git.
 - `resume-template/noob_resume_template.tex` - standalone ready-made template with sample contact details.
 - `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 - `build/profile-info.tex` - generated during the LinkedIn-source build; do not edit or commit it.
@@ -61,7 +62,7 @@ resume-template/noob_resume_template.tex
 scripts/build-user-resume.cmd
   -> copies a template from resume-template/
   -> generates build/custom_resume_template.tex
-  -> injects user-resources/user-info.tex or generated LinkedIn profile variables
+  -> injects user-resources/user-info.tex or generated LinkedIn profile data
   -> compiles the customized PDF
 ```
 
@@ -73,7 +74,7 @@ When more layouts are added later, each ready-made layout should live in `resume
 % <NOOB_PROFILE_END>
 ```
 
-The custom build replaces that marked block with the selected source at build time. No permanent custom template file is required.
+The custom build replaces the profile block with the selected source at build time. For the `linkedin` source, it also replaces the marked resume body with generated summary, skills, experience, projects, and education sections from `user-resources/linkedin-profile.json`. No permanent custom template file is required.
 
 To build the ready-made template from `resume-template/noob_resume_template.tex`:
 
@@ -93,7 +94,7 @@ To build from `user-resources/linkedin-profile.json`:
 scripts\build-user-resume.cmd linkedin
 ```
 
-The LinkedIn option reads local data from `user-resources/linkedin-profile.json`; it does not log in to LinkedIn or scrape a profile page.
+The LinkedIn option reads local data from `user-resources/linkedin-profile.json`; it does not log in to LinkedIn or scrape a profile page. This keeps the build reliable and avoids committing private profile data.
 
 To build from a different template in `resume-template/`, pass the template filename:
 
