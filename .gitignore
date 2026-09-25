@@ -1,4 +1,5 @@
 .project-metadata.yml
+AGENTS.md
 *.aux
 *.fdb_latexmk
 *.fls
