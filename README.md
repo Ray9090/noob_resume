@@ -49,11 +49,13 @@ To build the user-editable template:
 scripts\build-user-resume.cmd
 ```
 
-The PDF is generated at:
+The PDF is generated in `build/` using the resume name and a timestamp:
 
 ```text
-build/custom_resume_template.pdf
+build/John_Roe_20260925-113500.pdf
 ```
+
+If you update `user-resources/user-info.tex`, open the newest timestamped PDF from `build/`. The file `build/noob_resume_template.pdf` is produced by the original non-variable template and will not reflect `user-info.tex` changes.
 
 Overleaf template link:
 
@@ -71,7 +73,7 @@ Keep the template simple and ATS-friendly:
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
 - Use `scripts/build-resume.cmd` to compile the template into `build/noob_resume_template.pdf` after LaTeX is installed.
-- Use `scripts/build-user-resume.cmd` to compile the variable-driven template into `build/custom_resume_template.pdf`.
+- Use `scripts/build-user-resume.cmd` to compile the variable-driven template into a timestamped PDF in `build/`.
 
 If local setup fails on a managed/corporate machine:
 

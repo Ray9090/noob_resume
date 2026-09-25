@@ -13,22 +13,29 @@ if not %ERRORLEVEL%==0 (
 set "OUTPUT_DIR=%~dp0..\build"
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 
+for /f "usebackq delims=" %%A in (`powershell.exe -NoProfile -Command "$scriptDir='%~dp0'; $repoRoot=Resolve-Path (Join-Path $scriptDir '..'); $userInfo=Join-Path $repoRoot 'user-resources\user-info.tex'; $raw=Get-Content -Raw $userInfo; $name='custom_resume'; if ($raw -match '\\newcommand\{\\ResumeName\}\{([^}]*)\}') { $name=$Matches[1] }; $safe=($name -replace '[^A-Za-z0-9]+','_').Trim('_'); if ([string]::IsNullOrWhiteSpace($safe)) { $safe='custom_resume' }; $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'; Write-Output ($safe + '_' + $stamp)"`) do set "JOB_NAME=%%A"
+
+if "%JOB_NAME%"=="" (
+  echo ERROR: Could not create output file name from user-resources\user-info.tex.
+  exit /b 1
+)
+
 pushd "%~dp0..\user-resources"
-pdflatex -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
+pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
 if not %ERRORLEVEL%==0 (
-  echo ERROR: pdflatex failed. Check build\custom_resume_template.log for details.
+  echo ERROR: pdflatex failed. Check build\%JOB_NAME%.log for details.
   popd
   exit /b 1
 )
-pdflatex -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
+pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
 if not %ERRORLEVEL%==0 (
-  echo ERROR: pdflatex failed on rerun. Check build\custom_resume_template.log for details.
+  echo ERROR: pdflatex failed on rerun. Check build\%JOB_NAME%.log for details.
   popd
   exit /b 1
 )
 popd
 
-echo ==^> User resume PDF built at build\custom_resume_template.pdf
+echo ==^> User resume PDF built at build\%JOB_NAME%.pdf
 exit /b 0
 
 :add_latex_paths
