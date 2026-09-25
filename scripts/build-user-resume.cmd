@@ -13,22 +13,22 @@ if not %ERRORLEVEL%==0 (
 set "OUTPUT_DIR=%~dp0..\build"
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 
-pushd "%~dp0..\resume-template"
-pdflatex -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" noob_resume_template.tex
+pushd "%~dp0..\user-resources"
+pdflatex -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
 if not %ERRORLEVEL%==0 (
-  echo ERROR: pdflatex failed. Check build\noob_resume_template.log for details.
+  echo ERROR: pdflatex failed. Check build\custom_resume_template.log for details.
   popd
   exit /b 1
 )
-pdflatex -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" noob_resume_template.tex
+pdflatex -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" custom_resume_template.tex
 if not %ERRORLEVEL%==0 (
-  echo ERROR: pdflatex failed on rerun. Check build\noob_resume_template.log for details.
+  echo ERROR: pdflatex failed on rerun. Check build\custom_resume_template.log for details.
   popd
   exit /b 1
 )
 popd
 
-echo ==^> Resume PDF built at build\noob_resume_template.pdf
+echo ==^> User resume PDF built at build\custom_resume_template.pdf
 exit /b 0
 
 :add_latex_paths

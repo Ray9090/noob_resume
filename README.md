@@ -20,6 +20,11 @@ scripts\setup-latex.cmd
 scripts\build-resume.cmd
 ```
 
+```powershell
+# Compile the user-editable template
+scripts\build-user-resume.cmd
+```
+
 ```text
 Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compile it there.
 ```
@@ -30,6 +35,25 @@ Option 2: Upload resume-template/noob_resume_template.tex to Overleaf and compil
 2. Replace the sample John Doe details with your own information.
 3. Compile the file with `pdflatex` or Overleaf.
 4. Use the generated PDF from `build/noob_resume_template.pdf` for job applications.
+
+## User Resources
+
+The `user-resources/` folder contains a more flexible version of the resume template:
+
+- `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
+- `user-resources/custom_resume_template.tex` - layout file that reads the variables from `user-info.tex`.
+
+To build the user-editable template:
+
+```powershell
+scripts\build-user-resume.cmd
+```
+
+The PDF is generated at:
+
+```text
+build/custom_resume_template.pdf
+```
 
 Overleaf template link:
 
@@ -47,6 +71,7 @@ Keep the template simple and ATS-friendly:
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
 - Use `scripts/build-resume.cmd` to compile the template into `build/noob_resume_template.pdf` after LaTeX is installed.
+- Use `scripts/build-user-resume.cmd` to compile the variable-driven template into `build/custom_resume_template.pdf`.
 
 If local setup fails on a managed/corporate machine:
 
@@ -62,6 +87,7 @@ If local setup fails on a managed/corporate machine:
 - Editable single-file LaTeX source in `resume-template/`
 - One-command Windows LaTeX setup script
 - Dedicated `build/` folder for the compiled PDF
+- User-editable profile variables in `user-resources/user-info.tex`
 - Recruiter-readable headings and bullet points
 - Fictional sample data for easy replacement
 - No copied preview images or promotional assets
