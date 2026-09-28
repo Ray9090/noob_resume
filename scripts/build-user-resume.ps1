@@ -1,7 +1,7 @@
 param(
     [ValidateSet("user-info", "linkedin", "linkedin-pdf")]
     [string]$Source = "user-info",
-    [string]$Template = "noob_ats_resume_template.tex",
+    [string]$Template = "template_1.tex",
     [string]$LinkedInPdf = ""
 )
 

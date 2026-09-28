@@ -31,7 +31,7 @@ scripts\build-user-resume.cmd linkedin
 ```
 
 ```text
-Option 2: Upload resume-template/noob_ats_resume_template.tex to Overleaf and compile it there.
+Option 2: Upload resume-template/template_1.tex to Overleaf and compile it there.
 ```
 
 ## Usage
@@ -44,12 +44,12 @@ Option 2: Upload resume-template/noob_ats_resume_template.tex to Overleaf and co
 
 ## User Resources
 
-The ready-made layout lives in `resume-template/noob_ats_resume_template.tex`. It contains its own sample contact details and can compile by itself.
+The ready-made layout lives in `resume-template/template_1.tex`. It contains its own sample contact details and can compile by itself.
 
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
 - `user-resources/linkedin-profile.example.json` - tracked example for LinkedIn-style profile data.
 - `user-resources/linkedin-profile.json` - tracked curated profile JSON used by the `linkedin` build source.
-- `resume-template/noob_ats_resume_template.tex` - standalone ready-made Noob ATS Resume template with sample contact details.
+- `resume-template/template_1.tex` - standalone ready-made Noob ATS Resume template with sample contact details.
 - `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 - `build/profile-info.tex` - generated during LinkedIn-source builds; do not edit or commit it.
 - `build/linkedin-profile.bbox.html` - generated coordinate-aware PDF extraction from `pdftotext -bbox-layout`; useful for parser debugging.
@@ -60,7 +60,7 @@ The ready-made layout lives in `resume-template/noob_ats_resume_template.tex`. I
 This keeps the template flow simple:
 
 ```text
-resume-template/noob_ats_resume_template.tex
+resume-template/template_1.tex
   -> standalone ready-made template
 
 scripts/build-user-resume.cmd
@@ -80,7 +80,7 @@ When more layouts are added later, each ready-made layout should live in `resume
 
 The custom build replaces the profile block with the selected source at build time. For the `linkedin` source, it also replaces the marked resume body with generated summary, skills, experience, optional projects, and education sections from `user-resources/linkedin-profile.json`. No permanent custom template file is required.
 
-To build the ready-made template from `resume-template/noob_ats_resume_template.tex`:
+To build the ready-made template from `resume-template/template_1.tex`:
 
 ```powershell
 scripts\build-resume.cmd

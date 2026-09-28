@@ -26,7 +26,7 @@ if /I "%SOURCE_NAME:~-4%"==".tex" (
   set "TEMPLATE_NAME=%SOURCE_NAME%"
   set "SOURCE_NAME=user-info"
 )
-if "%TEMPLATE_NAME%"=="" set "TEMPLATE_NAME=noob_ats_resume_template.tex"
+if "%TEMPLATE_NAME%"=="" set "TEMPLATE_NAME=template_1.tex"
 
 set "NOOB_SCRIPT_DIR=%~dp0"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$script = Get-Content -Raw '%~dp0build-user-resume.ps1'; $block = [scriptblock]::Create($script); & $block -Source '%SOURCE_NAME%' -Template '%TEMPLATE_NAME%' -LinkedInPdf '%LINKEDIN_PDF_PATH%'"
