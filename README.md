@@ -142,7 +142,7 @@ Overleaf template link:
 
 This repository builds sample PDFs with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.
 
-The CI workflow uses a standard GitHub-hosted `windows-latest` runner, installs MiKTeX, builds each supported template with `user-resources/linkedin-profile.json`, and uploads the generated PDFs as short-lived workflow artifacts.
+The CI workflow uses a standard GitHub-hosted `ubuntu-latest` runner, installs TeX Live, builds each supported template with `user-resources/linkedin-profile.json`, and uploads the generated PDFs as short-lived workflow artifacts.
 
 The workflow is intentionally read-only:
 

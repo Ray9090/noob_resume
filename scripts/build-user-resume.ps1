@@ -21,8 +21,8 @@ if ([System.IO.Path]::GetExtension($Template) -eq "") {
     $Template = "$Template.tex"
 }
 $sourceTemplate = Join-Path $templateDir $Template
-$userInfoFile = Join-Path $repoRoot "user-resources\user-info.tex"
-$linkedInProfileFile = Join-Path $repoRoot "user-resources\linkedin-profile.json"
+$userInfoFile = Join-Path (Join-Path $repoRoot "user-resources") "user-info.tex"
+$linkedInProfileFile = Join-Path (Join-Path $repoRoot "user-resources") "linkedin-profile.json"
 $linkedInProfileSourceLabel = "user-resources/linkedin-profile.json"
 if (-not [string]::IsNullOrWhiteSpace($env:NOOB_LINKEDIN_PROFILE_JSON)) {
     $profileOverride = $env:NOOB_LINKEDIN_PROFILE_JSON
