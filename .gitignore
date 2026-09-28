@@ -8,3 +8,4 @@ AGENTS.md
 *.pdf
 *.synctex.gz
 build/
+reference_resources/

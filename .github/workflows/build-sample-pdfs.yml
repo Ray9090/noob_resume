@@ -1,0 +1,56 @@
+name: Build Sample PDFs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-sample-pdfs:
+    name: Build ${{ matrix.template }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        template:
+          - template_1
+          - template_2
+          - maang_1
+          - fanng_1
+          - europass_1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install MiKTeX
+        shell: powershell
+        run: |
+          choco install miktex --no-progress -y
+          "C:\Program Files\MiKTeX\miktex\bin\x64" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Configure MiKTeX
+        shell: powershell
+        run: |
+          initexmf --admin --set-config-value=[MPM]AutoInstall=1
+          mpm --admin --update-db
+          pdflatex --version
+
+      - name: Build sample PDF
+        shell: cmd
+        env:
+          NOOB_LINKEDIN_PROFILE_JSON: user-resources\sample-linkedin-profile.json
+        run: scripts\build-user-resume.cmd linkedin ${{ matrix.template }}
+
+      - name: Upload sample PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-${{ matrix.template }}
+          path: build/*.pdf
+          if-no-files-found: error
+          retention-days: 7

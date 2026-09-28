@@ -23,6 +23,15 @@ if ([System.IO.Path]::GetExtension($Template) -eq "") {
 $sourceTemplate = Join-Path $templateDir $Template
 $userInfoFile = Join-Path $repoRoot "user-resources\user-info.tex"
 $linkedInProfileFile = Join-Path $repoRoot "user-resources\linkedin-profile.json"
+$linkedInProfileSourceLabel = "user-resources/linkedin-profile.json"
+if (-not [string]::IsNullOrWhiteSpace($env:NOOB_LINKEDIN_PROFILE_JSON)) {
+    $profileOverride = $env:NOOB_LINKEDIN_PROFILE_JSON
+    if (-not [System.IO.Path]::IsPathRooted($profileOverride)) {
+        $profileOverride = Join-Path $repoRoot $profileOverride
+    }
+    $linkedInProfileFile = $profileOverride
+    $linkedInProfileSourceLabel = $env:NOOB_LINKEDIN_PROFILE_JSON.Replace("\", "/")
+}
 $outputDir = Join-Path $repoRoot "build"
 $generatedTemplate = Join-Path $outputDir "custom_resume_template.tex"
 $generatedProfile = Join-Path $outputDir "profile-info.tex"
@@ -683,7 +692,7 @@ if ($Source -eq "user-info") {
     $profileReplacement += [Environment]::NewLine + "\input{../user-resources/user-info.tex}"
 }
 else {
-    $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { "user-resources/linkedin-profile.json" }
+    $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { $linkedInProfileSourceLabel }
     $profileLines = @(
         "% Generated from $sourceLabel",
         "\newcommand{\ResumeName}{$(ConvertTo-LatexValue $linkedInProfile.name)}",
@@ -709,7 +718,7 @@ if ($Source -in @("linkedin", "linkedin-pdf")) {
         throw "Template content block markers were not found in $sourceTemplate. Add % <NOOB_CONTENT_START> and % <NOOB_CONTENT_END> around the resume body."
     }
 
-    $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { "user-resources/linkedin-profile.json" }
+    $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { $linkedInProfileSourceLabel }
     $isEuropassTemplate = $templateContent -match "\\documentclass\[[^]]*\]\{europasscv\}|\\documentclass\{europasscv\}"
     $replacementContent = if ($isEuropassTemplate) { ConvertTo-EuropassLinkedInContent $linkedInProfile $sourceLabel } else { ConvertTo-LinkedInContent $linkedInProfile $sourceLabel }
     $generatedContent = [regex]::Replace($generatedContent, $contentPattern, $replacementContent)

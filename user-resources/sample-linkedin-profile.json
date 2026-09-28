@@ -1,0 +1,60 @@
+{
+  "name": "Jordan Sample",
+  "phoneDisplay": "+1 555 010 2040",
+  "phoneLink": "+15550102040",
+  "email": "jordan.sample@example.com",
+  "linkedinDisplay": "linkedin.com/in/jordan-sample",
+  "linkedinUrl": "https://www.linkedin.com/in/jordan-sample/",
+  "githubDisplay": "github.com/jordan-sample",
+  "githubUrl": "https://github.com/jordan-sample",
+  "summary": "Software engineer with experience building backend services, web applications, automation tools, and cloud deployment workflows. Comfortable translating product requirements into reliable software, improving developer workflows, and maintaining production systems.",
+  "skills": {
+    "Programming Languages": "Python, TypeScript, JavaScript, SQL, Bash",
+    "Backend and APIs": "REST APIs, Node.js, Express, FastAPI, PostgreSQL, Redis",
+    "Frontend": "React, HTML, CSS, responsive UI development",
+    "Cloud and DevOps": "Docker, GitHub Actions, Linux, CI/CD, AWS fundamentals",
+    "Tools and Practices": "Git, testing, code review, documentation, Agile collaboration"
+  },
+  "experience": [
+    {
+      "company": "Acme Software Labs",
+      "location": "Remote",
+      "dates": "January 2024 - Present",
+      "title": "Software Engineer",
+      "items": [
+        "Built backend API features for a customer operations platform using Python, PostgreSQL, and Redis.",
+        "Improved deployment reliability by adding GitHub Actions checks for tests, linting, and build validation.",
+        "Collaborated with product and support teams to debug production issues and document repeatable fixes."
+      ]
+    },
+    {
+      "company": "Northwind Digital",
+      "location": "Austin, TX",
+      "dates": "June 2022 - December 2023",
+      "title": "Junior Software Developer",
+      "items": [
+        "Implemented React components and API integrations for internal business dashboards.",
+        "Created automation scripts that reduced manual reporting work for the operations team.",
+        "Wrote unit tests and updated technical documentation for shared application modules."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Resume Builder Automation",
+      "tech": "PowerShell, LaTeX, GitHub Actions",
+      "items": [
+        "Created a local workflow that generates timestamped resume PDFs from reusable profile data.",
+        "Added CI checks to compile sample templates and catch LaTeX errors before release."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "Example State University",
+      "dates": "2018 - 2022",
+      "degree": "Bachelor of Science in Computer Science",
+      "location": "Austin, TX"
+    }
+  ]
+}
