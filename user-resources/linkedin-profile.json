@@ -1,0 +1,115 @@
+{
+  "name": "Md Mozammel Hossain",
+  "phoneDisplay": "",
+  "phoneLink": "",
+  "email": "mozammelhossain963@gmail.com",
+  "linkedinDisplay": "linkedin.com/in/md-mozammel-hossain-829341122",
+  "linkedinUrl": "https://www.linkedin.com/in/md-mozammel-hossain-829341122/",
+  "githubDisplay": "github.com/Ray9090",
+  "githubUrl": "https://github.com/Ray9090",
+  "summary": "Embedded software developer in Germany with experience in Embedded Linux, custom Linux distributions, Windows IoT/OS image development, and industrial software solutions. Current work at INB Vision GmbH focuses on Yocto and OpenEmbedded Linux distributions, C/C++ and Qt applications, Conan/CMake packaging, CI/CD, secure update workflows, and software for industrial sensor systems. Previous BMW Group work included Industry 4.0, digital twin integration, and predictive-maintenance solutions for EV engine production.",
+  "skills": {
+    "Programming Languages": "C, C++, Python, C#, Batch scripting, QML, SQL",
+    "Embedded Linux and Operating Systems": "Embedded Linux, Linux, Yocto, Poky, OpenEmbedded, Linux kernel concepts, custom Linux distributions, Windows IoT, custom Windows OS images, Android, operating-system customization",
+    "Embedded Platforms and Hardware": "NVIDIA Jetson, ARM platforms, x86 architectures, Raspberry Pi, industrial sensor systems, board support packages, platform-specific hardware configuration, boot flows, storage layouts",
+    "Application and UI Development": "Qt, QML, Linux applications, platform components, graphical user interface design, OpenFrameworks",
+    "Build, Packaging, and Toolchains": "CMake, Conan, Qt packaging, reusable C++ libraries, package-management workflows, Windows Assessment and Deployment Kit (ADK)",
+    "DevOps, CI/CD, and Deployment": "Git, GitLab CI/CD, Docker, PXE Server, automated OS image updates, secure A/B OTA updates, RAUC, encrypted update bundles, compatibility handling, rollback-aware slot management, update validation, remote signing workflows",
+    "Security and Provisioning": "UEFI Secure Boot, device provisioning, persistent-data architecture, factory-reset workflows, manufacturing-time configuration, early-boot initialization, runtime device configuration",
+    "Industrial Software and Communication": "Manufacturing software, industrial Ethernet configuration, diagnostic communication workflows, networking protocols, OPC UA, device-service integration, cost-effective solutions",
+    "AI, Data, and Automation": "Machine learning, predictive maintenance, predictive-maintenance models, digital twin integration, maintenance notification dashboards, PyTorch, data science fundamentals",
+    "PLC and Industry 4.0": "Industry 4.0, PLC programming, KEB COMBIVIS Studio, HMI, industrial machine software"
+  },
+  "experience": [
+    {
+      "company": "INB Vision GmbH",
+      "location": "Magdeburg, Germany",
+      "dates": "November 2023 - Present",
+      "title": "Software Developer",
+      "items": [
+        "Build production embedded firmware for NVIDIA Jetson ARM platforms and x86-based computing architectures.",
+        "Create Yocto/Poky/OpenEmbedded Linux distributions, board support packages, boot flows, storage layouts, and platform-specific hardware configuration.",
+        "Develop C/C++ and Qt software components for industrial sensor systems and package reusable libraries with Conan and CMake.",
+        "Support secure update workflows including A/B OTA updates, RAUC, encrypted bundles, rollback-aware slot management, and update validation.",
+        "Work with Docker, Git, GitLab CI/CD, OPC UA, networking protocols, Embedded Linux, Linux kernel concepts, ARM, and x86 architectures."
+      ]
+    },
+    {
+      "company": "INB Vision GmbH",
+      "location": "Magdeburg, Germany",
+      "dates": "September 2023 - November 2023",
+      "title": "Software Developer Intern",
+      "items": [
+        "Supported embedded software development for industrial sensor systems using C/C++, Qt, Linux, and related build tooling.",
+        "Worked on application components, platform integration tasks, debugging, and technical documentation with the software team.",
+        "Gained hands-on experience with Git, CMake, Linux-based development workflows, and industrial software engineering practices."
+      ]
+    },
+    {
+      "company": "BMW Group",
+      "location": "Dingolfing, Germany",
+      "dates": "November 2022 - July 2023",
+      "title": "Master Thesis Student",
+      "items": [
+        "Developed predictive-maintenance concepts for EV engine production using machine learning and production data analysis.",
+        "Integrated maintenance-notification dashboards and digital-twin workflows to support Industry 4.0 production environments.",
+        "Conducted root-cause analysis on equipment failures to improve maintenance planning and reduce downtime."
+      ]
+    },
+    {
+      "company": "BMW Group",
+      "location": "Dingolfing, Germany",
+      "dates": "May 2022 - October 2022",
+      "title": "Intern in the Field of Industry 4.0",
+      "items": [
+        "Supported industrial machine software, PLC programming, HMI development, and Industry 4.0 tooling.",
+        "Worked with KEB COMBIVIS Studio and production-system data to support automation and machine integration tasks."
+      ]
+    },
+    {
+      "company": "Institut fuer Polymertechnologien e.V.",
+      "location": "Wismar, Germany",
+      "dates": "October 2020 - June 2021",
+      "title": "Research Assistant",
+      "items": [
+        "Supported research and automation tasks involving software tooling, measurement workflows, and data handling.",
+        "Assisted with technical documentation and prototype validation for applied engineering projects."
+      ]
+    },
+    {
+      "company": "K. N. Power Service Limited",
+      "location": "Dhaka, Bangladesh",
+      "dates": "October 2018 - October 2019",
+      "title": "Trainee Officer",
+      "items": [
+        "Supported electrical and technical service tasks for power-system projects and customer operations.",
+        "Coordinated troubleshooting, reporting, and field-support activities with engineering teams."
+      ]
+    },
+    {
+      "company": "ESTILO BANGLADESH",
+      "location": "Dhaka, Bangladesh",
+      "dates": "September 2016 - October 2018",
+      "title": "IT Officer",
+      "items": [
+        "Managed information technology systems, computer systems, and electronic data operations.",
+        "Supported IT staff, operational troubleshooting, and internal technology services."
+      ]
+    }
+  ],
+  "projects": [],
+  "education": [
+    {
+      "school": "Hochschule Wismar",
+      "dates": "2019 - 2022",
+      "degree": "Master's Degree, Information Science/Studies",
+      "location": "Wismar, Germany"
+    },
+    {
+      "school": "Ahsanullah University of Science and Technology",
+      "dates": "2013 - 2016",
+      "degree": "Bachelor of Science, Electrical and Electronics Engineering",
+      "location": "Dhaka, Bangladesh"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 param(
     [ValidateSet("user-info", "linkedin", "linkedin-pdf")]
     [string]$Source = "user-info",
-    [string]$Template = "noob_resume_template.tex",
+    [string]$Template = "noob_ats_resume_template.tex",
     [string]$LinkedInPdf = ""
 )
 
@@ -403,14 +403,17 @@ function ConvertTo-LinkedInContent {
     $lines += @(
         "",
         "\resumeSubHeadingListEnd",
-        "\vspace{-16pt}",
-        "",
-        "%-----------PROJECTS-----------",
-        "\section{Projects}",
-        "\resumeSubHeadingListStart"
+        "\vspace{-16pt}"
     )
 
-    if ($Profile.projects) {
+    if ($Profile.projects -and @($Profile.projects).Count -gt 0) {
+        $lines += @(
+            "",
+            "%-----------PROJECTS-----------",
+            "\section{Projects}",
+            "\resumeSubHeadingListStart"
+        )
+
         foreach ($project in @($Profile.projects)) {
             if ($null -eq $project) { continue }
             $projectLine = "\textbf{$(ConvertTo-LatexValue $project.name)}"
@@ -422,15 +425,15 @@ function ConvertTo-LinkedInContent {
             $lines += "          {$projectLine}{$(ConvertTo-LatexValue $project.dates)}"
             $lines += Add-ResumeItems $project.items
         }
-    }
-    else {
-        $lines += "    \item[]"
+
+        $lines += @(
+            "",
+            "\resumeSubHeadingListEnd",
+            "\vspace{-16pt}"
+        )
     }
 
     $lines += @(
-        "",
-        "\resumeSubHeadingListEnd",
-        "\vspace{-16pt}",
         "",
         "%-----------EDUCATION-----------",
         "\section{Education}",
@@ -574,6 +577,11 @@ if ($Source -in @("linkedin", "linkedin-pdf")) {
 
     $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { "user-resources/linkedin-profile.json" }
     $generatedContent = [regex]::Replace($generatedContent, $contentPattern, (ConvertTo-LinkedInContent $linkedInProfile $sourceLabel))
+
+    if ([string]::IsNullOrWhiteSpace([string]$linkedInProfile.phoneDisplay)) {
+        $phoneHeaderPattern = "(?m)^\s*\\href\{tel:\\ResumePhoneLink\}\{\\raisebox\{-0\.1\\height\}\\faPhone\\\s*\\underline\{\\ResumePhoneDisplay\}\}\s*~\s*\$\|\$\s*~\s*\r?\n"
+        $generatedContent = [regex]::Replace($generatedContent, $phoneHeaderPattern, "")
+    }
 }
 Set-Content -Path $generatedTemplate -Value $generatedContent -NoNewline
 

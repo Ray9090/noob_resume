@@ -14,16 +14,16 @@ set "OUTPUT_DIR=%~dp0..\build"
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 
 for /f "usebackq delims=" %%A in (`powershell.exe -NoProfile -Command "Get-Date -Format 'yyyyMMdd-HHmmss'"`) do set "STAMP=%%A"
-set "JOB_NAME=noob_resume_template_%STAMP%"
+set "JOB_NAME=noob_ats_resume_template_%STAMP%"
 
 pushd "%~dp0..\resume-template"
-pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" noob_resume_template.tex
+pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" noob_ats_resume_template.tex
 if not %ERRORLEVEL%==0 (
   echo ERROR: pdflatex failed. Check build\%JOB_NAME%.log for details.
   popd
   exit /b 1
 )
-pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" noob_resume_template.tex
+pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" noob_ats_resume_template.tex
 if not %ERRORLEVEL%==0 (
   echo ERROR: pdflatex failed on rerun. Check build\%JOB_NAME%.log for details.
   popd
