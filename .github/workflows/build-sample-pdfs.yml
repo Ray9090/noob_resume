@@ -43,8 +43,6 @@ jobs:
 
       - name: Build sample PDF
         shell: cmd
-        env:
-          NOOB_LINKEDIN_PROFILE_JSON: user-resources\sample-linkedin-profile.json
         run: scripts\build-user-resume.cmd linkedin ${{ matrix.template }}
 
       - name: Upload sample PDF

@@ -52,7 +52,6 @@ The ready-made layout lives in `resume-template/template_1.tex`. It contains its
 - `user-resources/user-info.tex` - edit this file to enter name, phone, email, LinkedIn, and GitHub values.
 - `user-resources/linkedin-profile.example.json` - tracked example for LinkedIn-style profile data.
 - `user-resources/linkedin-profile.json` - tracked curated profile JSON used by the `linkedin` build source.
-- `user-resources/sample-linkedin-profile.json` - fictional profile data used by GitHub Actions CI sample builds.
 - `resume-template/template_1.tex` - standalone ready-made Noob ATS Resume template with sample contact details.
 - `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 - `build/profile-info.tex` - generated during LinkedIn-source builds; do not edit or commit it.
@@ -143,13 +142,12 @@ Overleaf template link:
 
 This repository builds sample PDFs with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.
 
-The CI workflow uses a standard GitHub-hosted `windows-latest` runner, installs MiKTeX, builds each supported template with `user-resources/sample-linkedin-profile.json`, and uploads the generated PDFs as short-lived workflow artifacts.
+The CI workflow uses a standard GitHub-hosted `windows-latest` runner, installs MiKTeX, builds each supported template with `user-resources/linkedin-profile.json`, and uploads the generated PDFs as short-lived workflow artifacts.
 
 The workflow is intentionally read-only:
 
 - It does not commit generated PDFs.
 - It does not push changes back to the repository.
-- It does not use the curated personal profile from `user-resources/linkedin-profile.json`.
 - Generated artifacts are retained for 7 days.
 
 To inspect the CI output, open GitHub -> Actions -> Build Sample PDFs -> latest run -> Artifacts.
