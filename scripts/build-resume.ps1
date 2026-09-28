@@ -1,8 +1,23 @@
+param(
+    [string]$Template = "template_1.tex"
+)
+
 $ErrorActionPreference = "Stop"
 
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$scriptRoot = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
+    $scriptRoot = $env:NOOB_SCRIPT_DIR
+}
+
+$repoRoot = Resolve-Path (Join-Path $scriptRoot "..")
 $templateDir = Join-Path $repoRoot "resume-template"
-$templateFile = Join-Path $templateDir "template_1.tex"
+if ([string]::IsNullOrWhiteSpace($Template)) {
+    $Template = "template_1.tex"
+}
+if ([System.IO.Path]::GetExtension($Template) -eq "") {
+    $Template = "$Template.tex"
+}
+$templateFile = Join-Path $templateDir $Template
 $outputDir = Join-Path $repoRoot "build"
 
 if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
@@ -10,18 +25,25 @@ if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
 }
 
 if (-not (Test-Path $templateFile)) {
-    throw "Template file not found: $templateFile"
+    $availableTemplates = Get-ChildItem $templateDir -Filter "*.tex" | ForEach-Object { $_.Name }
+    throw "Template file not found: $templateFile. Available templates: $($availableTemplates -join ', ')"
+}
+
+$templateBaseName = [System.IO.Path]::GetFileNameWithoutExtension($Template)
+$safeTemplateName = ($templateBaseName -replace "[^A-Za-z0-9]+", "_").Trim("_")
+if ([string]::IsNullOrWhiteSpace($safeTemplateName)) {
+    $safeTemplateName = "template"
 }
 
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$jobName = "template_1_${timestamp}"
+$jobName = "${safeTemplateName}_${timestamp}"
 
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
 Push-Location $templateDir
 try {
     for ($run = 1; $run -le 2; $run++) {
-        pdflatex -interaction=nonstopmode -jobname="$jobName" -output-directory="$outputDir" template_1.tex
+        pdflatex -interaction=nonstopmode -jobname="$jobName" -output-directory="$outputDir" $Template
         if ($LASTEXITCODE -ne 0) {
             throw "pdflatex failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
         }
@@ -31,4 +53,5 @@ finally {
     Pop-Location
 }
 
+Write-Host "==> Template: resume-template/$Template"
 Write-Host "==> Resume PDF built at build/$jobName.pdf"

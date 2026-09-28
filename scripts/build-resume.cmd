@@ -10,28 +10,20 @@ if not %ERRORLEVEL%==0 (
   exit /b 1
 )
 
-set "OUTPUT_DIR=%~dp0..\build"
-if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
+set "TEMPLATE_NAME=%~1"
+if "%TEMPLATE_NAME%"=="" set "TEMPLATE_NAME=template_1.tex"
 
-for /f "usebackq delims=" %%A in (`powershell.exe -NoProfile -Command "Get-Date -Format 'yyyyMMdd-HHmmss'"`) do set "STAMP=%%A"
-set "JOB_NAME=template_1_%STAMP%"
+if /I "%TEMPLATE_NAME%"=="templates" goto :list_templates
+if /I "%TEMPLATE_NAME%"=="--list-templates" goto :list_templates
+if /I "%TEMPLATE_NAME%"=="/list-templates" goto :list_templates
 
-pushd "%~dp0..\resume-template"
-pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" template_1.tex
-if not %ERRORLEVEL%==0 (
-  echo ERROR: pdflatex failed. Check build\%JOB_NAME%.log for details.
-  popd
-  exit /b 1
-)
-pdflatex -interaction=nonstopmode -jobname="%JOB_NAME%" -output-directory="%OUTPUT_DIR%" template_1.tex
-if not %ERRORLEVEL%==0 (
-  echo ERROR: pdflatex failed on rerun. Check build\%JOB_NAME%.log for details.
-  popd
-  exit /b 1
-)
-popd
+set "NOOB_SCRIPT_DIR=%~dp0"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$script = Get-Content -Raw '%~dp0build-resume.ps1'; $block = [scriptblock]::Create($script); & $block -Template '%TEMPLATE_NAME%'"
+exit /b %ERRORLEVEL%
 
-echo ==^> Resume PDF built at build\%JOB_NAME%.pdf
+:list_templates
+echo Available templates:
+for %%F in ("%~dp0..\resume-template\*.tex") do echo   %%~nxF
 exit /b 0
 
 :add_latex_paths

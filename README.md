@@ -16,18 +16,21 @@ scripts\setup-latex.cmd
 ```
 
 ```powershell
-# After setup, compile the ready-made template locally
-scripts\build-resume.cmd
+# After setup, list available templates
+scripts\build-resume.cmd templates
+
+# Compile a ready-made template locally
+scripts\build-resume.cmd template_1.tex
 ```
 
 ```powershell
-# Generate and compile a user-customized resume from user-info.tex
-scripts\build-user-resume.cmd user-info
+# Generate and compile a user-customized resume from user-info.tex and a selected template
+scripts\build-user-resume.cmd user-info template_1.tex
 ```
 
 ```powershell
-# Generate and compile from LinkedIn-style profile data
-scripts\build-user-resume.cmd linkedin
+# Generate and compile from LinkedIn-style profile data and a selected template
+scripts\build-user-resume.cmd linkedin template_1.tex
 ```
 
 ```text
@@ -39,8 +42,8 @@ Option 2: Upload resume-template/template_1.tex to Overleaf and compile it there
 1. Choose a profile source: `user-info`, `linkedin`, or `linkedin-pdf`.
 2. For `user-info`, edit `user-resources/user-info.tex`.
 3. For `linkedin`, edit `user-resources/linkedin-profile.json`. This tracked file is the curated profile JSON; later parser improvements can update it from LinkedIn data.
-4. Run `scripts\build-user-resume.cmd user-info`, `scripts\build-user-resume.cmd linkedin`, or `scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf`.
-5. Use the newest timestamped PDF from `build/` for job applications.
+4. Run `scripts\build-user-resume.cmd templates` to see available templates, then build with `scripts\build-user-resume.cmd user-info template_1.tex`, `scripts\build-user-resume.cmd linkedin template_1.tex`, or `scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf template_1.tex`.
+5. Use the newest timestamped PDF from `build/`; the filename includes both the resume name and selected template.
 
 ## User Resources
 
@@ -80,28 +83,34 @@ When more layouts are added later, each ready-made layout should live in `resume
 
 The custom build replaces the profile block with the selected source at build time. For the `linkedin` source, it also replaces the marked resume body with generated summary, skills, experience, optional projects, and education sections from `user-resources/linkedin-profile.json`. No permanent custom template file is required.
 
-To build the ready-made template from `resume-template/template_1.tex`:
+To list and build ready-made templates from `resume-template/`:
 
 ```powershell
-scripts\build-resume.cmd
+scripts\build-resume.cmd templates
+scripts\build-resume.cmd template_1.tex
+scripts\build-resume.cmd template_2.tex
 ```
 
-To build the customized resume from the default ready-made template plus `user-resources/user-info.tex`:
+To build the customized resume from a selected ready-made template plus `user-resources/user-info.tex`:
 
 ```powershell
-scripts\build-user-resume.cmd user-info
+scripts\build-user-resume.cmd templates
+scripts\build-user-resume.cmd user-info template_1.tex
+scripts\build-user-resume.cmd user-info template_2.tex
 ```
 
-To build from `user-resources/linkedin-profile.json`:
+To build from `user-resources/linkedin-profile.json` and a selected template:
 
 ```powershell
-scripts\build-user-resume.cmd linkedin
+scripts\build-user-resume.cmd linkedin template_1.tex
+scripts\build-user-resume.cmd linkedin template_2.tex
 ```
 
-To build from a LinkedIn profile PDF saved by the user:
+To build from a LinkedIn profile PDF saved by the user and a selected template:
 
 ```powershell
-scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf
+scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf template_1.tex
+scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf template_2.tex
 ```
 
 The LinkedIn options read local data only; they do not log in to LinkedIn or scrape a profile page. The `linkedin-pdf` source uses a two-stage importer: first it extracts coordinate-aware PDF lines with `pdftotext -bbox-layout`, then it classifies those lines into contact details, summary, skills, experience, and education. It writes `build/linkedin-profile.bbox.html`, `build/linkedin-profile.lines.json`, `build/linkedin-profile.txt`, and `build/linkedin-profile.generated.json`, then compiles from the generated JSON. PDF parsing is still best-effort because LinkedIn can change the export layout, so review the generated JSON/PDF and refine with the JSON source if needed.
@@ -114,10 +123,10 @@ scripts\build-user-resume.cmd linkedin another_template.tex
 scripts\build-user-resume.cmd linkedin-pdf path\to\Profile.pdf another_template.tex
 ```
 
-The customized PDF is generated in `build/` using the resume name and a timestamp:
+The customized PDF is generated in `build/` using the resume name, selected template, and a timestamp:
 
 ```text
-build/John_Roe_20260925-113500.pdf
+build/John_Roe_template_2_20260925-113500.pdf
 ```
 
 If you update `user-resources/user-info.tex`, `user-resources/linkedin-profile.json`, or the LinkedIn PDF, run the matching build command again and open the newest timestamped PDF from `build/`.
@@ -137,10 +146,10 @@ Keep the template simple and ATS-friendly:
 - Keep canonical resume layouts in `resume-template/`.
 - Do not commit generated PDFs or temporary LaTeX build files.
 - Use `scripts/setup-latex.cmd` to install MiKTeX on Windows with `winget`, the official MiKTeX installer, or Chocolatey.
-- Use `scripts/build-resume.cmd` to compile the standalone ready-made template into a timestamped PDF in `build/`.
-- Use `scripts/build-user-resume.cmd user-info` to generate `build/custom_resume_template.tex` from a ready-made template and compile it with values from `user-resources/user-info.tex`.
-- Use `scripts/build-user-resume.cmd linkedin` to generate the resume from `user-resources/linkedin-profile.json`.
-- Use `scripts/build-user-resume.cmd linkedin-pdf path\to\Profile.pdf` to generate a resume from a locally saved LinkedIn profile PDF through the coordinate-aware line extractor and classifier.
+- Use `scripts/build-resume.cmd templates` to list layouts, then `scripts/build-resume.cmd template_1.tex` or `scripts/build-resume.cmd template_2.tex` to compile a standalone ready-made template into a timestamped PDF in `build/`.
+- Use `scripts/build-user-resume.cmd user-info template_1.tex` or another selected template to generate `build/custom_resume_template.tex` and compile it with values from `user-resources/user-info.tex`.
+- Use `scripts/build-user-resume.cmd linkedin template_1.tex` or another selected template to generate the resume from `user-resources/linkedin-profile.json`.
+- Use `scripts/build-user-resume.cmd linkedin-pdf path\to\Profile.pdf template_1.tex` or another selected template to generate a resume from a locally saved LinkedIn profile PDF through the coordinate-aware line extractor and classifier.
 
 If local setup fails on a managed/corporate machine:
 

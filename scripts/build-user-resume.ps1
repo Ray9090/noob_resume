@@ -14,6 +14,12 @@ if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
 
 $repoRoot = Resolve-Path (Join-Path $scriptRoot "..")
 $templateDir = Join-Path $repoRoot "resume-template"
+if ([string]::IsNullOrWhiteSpace($Template)) {
+    $Template = "template_1.tex"
+}
+if ([System.IO.Path]::GetExtension($Template) -eq "") {
+    $Template = "$Template.tex"
+}
 $sourceTemplate = Join-Path $templateDir $Template
 $userInfoFile = Join-Path $repoRoot "user-resources\user-info.tex"
 $linkedInProfileFile = Join-Path $repoRoot "user-resources\linkedin-profile.json"
@@ -463,12 +469,131 @@ function ConvertTo-LinkedInContent {
     return $lines -join [Environment]::NewLine
 }
 
+function Add-EuropassItemList {
+    param([System.Collections.IEnumerable]$Items)
+
+    $lines = @()
+    $cleanItems = @($Items | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })
+    if ($cleanItems.Count -eq 0) {
+        return $lines
+    }
+
+    $lines += "\ecvitem{}{"
+    $lines += "  \begin{ecvitemize}"
+    foreach ($item in $cleanItems) {
+        $lines += "    \item $(ConvertTo-LatexValue $item)"
+    }
+    $lines += "  \end{ecvitemize}"
+    $lines += "}"
+    return $lines
+}
+
+function ConvertTo-EuropassLinkedInContent {
+    param($Profile, [string]$SourceLabel)
+
+    $lines = @(
+        "% <NOOB_CONTENT_START>",
+        "% Generated from $SourceLabel",
+        "%-----------SUMMARY-----------",
+        "\ecvsection{Professional Summary}"
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace([string]$Profile.summary)) {
+        $lines += "\ecvitem{}{$(ConvertTo-LatexValue $Profile.summary)}"
+    }
+
+    $lines += @(
+        "",
+        "%-----------EXPERIENCE-----------",
+        "\ecvsection{Work experience}"
+    )
+
+    if ($Profile.experience) {
+        foreach ($role in @($Profile.experience)) {
+            if ($null -eq $role) { continue }
+            $title = ConvertTo-LatexValue $role.title
+            $dates = ConvertTo-LatexValue $role.dates
+            $companyLine = ConvertTo-LatexValue $role.company
+            if ($role.location) {
+                $companyLine += ", $(ConvertTo-LatexValue $role.location)"
+            }
+
+            $lines += ""
+            $lines += "\ecvtitle{$dates}{$title}"
+            if (-not [string]::IsNullOrWhiteSpace($companyLine)) {
+                $lines += "\ecvitem{}{$companyLine}"
+            }
+            $lines += Add-EuropassItemList $role.items
+        }
+    }
+
+    if ($Profile.projects -and @($Profile.projects).Count -gt 0) {
+        $lines += @(
+            "",
+            "%-----------PROJECTS-----------",
+            "\ecvsection{Projects}"
+        )
+
+        foreach ($project in @($Profile.projects)) {
+            if ($null -eq $project) { continue }
+            $projectTitle = ConvertTo-LatexValue $project.name
+            if ($project.technologies) {
+                $projectTitle += " -- $(ConvertTo-LatexValue $project.technologies)"
+            }
+            $lines += ""
+            $lines += "\ecvtitle{$(ConvertTo-LatexValue $project.dates)}{$projectTitle}"
+            $lines += Add-EuropassItemList $project.items
+        }
+    }
+
+    $lines += @(
+        "",
+        "%-----------EDUCATION-----------",
+        "\ecvsection{Education and training}"
+    )
+
+    if ($Profile.education) {
+        foreach ($education in @($Profile.education)) {
+            if ($null -eq $education) { continue }
+            $lines += ""
+            $lines += "\ecvtitle{$(ConvertTo-LatexValue $education.dates)}{$(ConvertTo-LatexValue $education.degree)}"
+            $schoolLine = ConvertTo-LatexValue $education.school
+            if ($education.location) {
+                $schoolLine += ", $(ConvertTo-LatexValue $education.location)"
+            }
+            if (-not [string]::IsNullOrWhiteSpace($schoolLine)) {
+                $lines += "\ecvitem{}{$schoolLine}"
+            }
+        }
+    }
+
+    $lines += @(
+        "",
+        "%-----------TECHNICAL SKILLS-----------",
+        "\ecvsection{Personal skills}",
+        "\ecvblueitem{Technical skills}{"
+    )
+
+    if ($Profile.skills) {
+        $skillLines = @()
+        foreach ($skill in $Profile.skills.PSObject.Properties) {
+            if ([string]::IsNullOrWhiteSpace([string]$skill.Value)) { continue }
+            $skillLines += "\textbf{$(ConvertTo-LatexValue $skill.Name)}: $(ConvertTo-LatexValue $skill.Value)"
+        }
+        $lines += ($skillLines -join "\newline ")
+    }
+
+    $lines += "}"
+    $lines += "% <NOOB_CONTENT_END>"
+    return $lines -join [Environment]::NewLine
+}
 if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
     throw "pdflatex is not installed or not available in PATH. Run: powershell -ExecutionPolicy Bypass -File scripts/setup-latex.ps1"
 }
 
 if (-not (Test-Path $sourceTemplate)) {
-    throw "Template file not found: $sourceTemplate"
+    $availableTemplates = Get-ChildItem $templateDir -Filter "*.tex" | ForEach-Object { $_.Name }
+    throw "Template file not found: $sourceTemplate. Available templates: $($availableTemplates -join ', ')"
 }
 
 if ($Source -eq "user-info" -and -not (Test-Path $userInfoFile)) {
@@ -535,12 +660,21 @@ if ([string]::IsNullOrWhiteSpace($safeName)) {
     $safeName = "custom_resume"
 }
 
+$templateBaseName = [System.IO.Path]::GetFileNameWithoutExtension($Template)
+$safeTemplateName = ($templateBaseName -replace "[^A-Za-z0-9]+", "_").Trim("_")
+if ([string]::IsNullOrWhiteSpace($safeTemplateName)) {
+    $safeTemplateName = "template"
+}
+
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$jobName = "${safeName}_${timestamp}"
+$jobName = "${safeName}_${safeTemplateName}_${timestamp}"
 
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
 $templateContent = Get-Content -Raw $sourceTemplate
+if ([string]::IsNullOrWhiteSpace($templateContent)) {
+    throw "Template file is empty: $sourceTemplate. Add LaTeX content and the required NOOB_PROFILE/NOOB_CONTENT markers before building from profile data."
+}
 $profilePattern = "(?s)% <NOOB_PROFILE_START>.*?% <NOOB_PROFILE_END>"
 $contentPattern = "(?s)% <NOOB_CONTENT_START>.*?% <NOOB_CONTENT_END>"
 $profileReplacement = "% User-editable profile variables."
@@ -576,7 +710,9 @@ if ($Source -in @("linkedin", "linkedin-pdf")) {
     }
 
     $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { "user-resources/linkedin-profile.json" }
-    $generatedContent = [regex]::Replace($generatedContent, $contentPattern, (ConvertTo-LinkedInContent $linkedInProfile $sourceLabel))
+    $isEuropassTemplate = $templateContent -match "\\documentclass\[[^]]*\]\{europasscv\}|\\documentclass\{europasscv\}"
+    $replacementContent = if ($isEuropassTemplate) { ConvertTo-EuropassLinkedInContent $linkedInProfile $sourceLabel } else { ConvertTo-LinkedInContent $linkedInProfile $sourceLabel }
+    $generatedContent = [regex]::Replace($generatedContent, $contentPattern, $replacementContent)
 
     if ([string]::IsNullOrWhiteSpace([string]$linkedInProfile.phoneDisplay)) {
         $phoneHeaderPattern = "(?m)^\s*\\href\{tel:\\ResumePhoneLink\}\{\\raisebox\{-0\.1\\height\}\\faPhone\\\s*\\underline\{\\ResumePhoneDisplay\}\}\s*~\s*\$\|\$\s*~\s*\r?\n"
@@ -599,6 +735,7 @@ finally {
 }
 
 Write-Host "==> Source: $Source"
+Write-Host "==> Template: resume-template/$Template"
 if ($Source -eq "linkedin-pdf") {
     Write-Host "==> Extracted LinkedIn PDF lines to build/linkedin-profile.lines.json"
     Write-Host "==> Wrote readable LinkedIn PDF text to build/linkedin-profile.txt"
