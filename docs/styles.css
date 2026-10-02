@@ -395,3 +395,23 @@ code {
   color: var(--muted);
   font-size: 14px;
 }
+
+.latest-pdf {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.latest-pdf span {
+  color: var(--muted);
+}
+
+.latest-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

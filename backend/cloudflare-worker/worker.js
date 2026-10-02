@@ -53,6 +53,8 @@ export default {
     const workflow = env.GITHUB_WORKFLOW || DEFAULT_WORKFLOW;
     const body = await request.json().catch(() => ({}));
     const ref = body.ref || env.GITHUB_REF || "main";
+    const allowedTemplates = new Set(["template_1", "template_2", "maang_1", "fanng_1", "europass_1"]);
+    const template = allowedTemplates.has(body.template) ? body.template : "template_1";
 
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
       method: "POST",
@@ -63,7 +65,7 @@ export default {
         "User-Agent": "noob-resume-pages-trigger",
         "X-GitHub-Api-Version": "2022-11-28"
       },
-      body: JSON.stringify({ ref })
+      body: JSON.stringify({ ref, inputs: { template } })
     });
 
     if (!response.ok) {
@@ -74,6 +76,7 @@ export default {
     return jsonResponse({
       ok: true,
       ref,
+      template,
       actions_url: `https://github.com/${owner}/${repo}/actions/workflows/${workflow}`
     }, 200, corsHeaders);
   }

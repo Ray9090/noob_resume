@@ -8,6 +8,7 @@ const templates = [
 
 const templateGrid = document.querySelector("#templateGrid");
 const templateSelect = document.querySelector("#templateSelect");
+const triggerTemplateSelect = document.querySelector("#triggerTemplate");
 const buildCommand = document.querySelector("#buildCommand");
 
 function renderTemplates() {
@@ -20,9 +21,12 @@ function renderTemplates() {
     </article>
   `).join("");
 
-  templateSelect.innerHTML = templates.map((template) => `
+  const options = templates.map((template) => `
     <option value="${template.id}">${template.name}</option>
   `).join("");
+
+  templateSelect.innerHTML = options;
+  triggerTemplateSelect.innerHTML = options;
 }
 
 function updateCommand() {
@@ -86,6 +90,7 @@ async function triggerCiRun() {
   const endpoint = (data.get("endpoint") || "").trim().replace(/\/$/, "");
   const key = (data.get("key") || "").trim();
   const branch = (data.get("branch") || "main").trim();
+  const template = (data.get("template") || "template_1").trim();
 
   if (!endpoint || !key) {
     status.textContent = "Enter the backend URL and trigger key.";
@@ -100,17 +105,42 @@ async function triggerCiRun() {
         "Content-Type": "application/json",
         "X-Noob-Trigger-Key": key
       },
-      body: JSON.stringify({ ref: branch })
+      body: JSON.stringify({ ref: branch, template })
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
       throw new Error(payload.error || `Request failed with ${response.status}`);
     }
-    status.innerHTML = `Workflow triggered. <a href="${payload.actions_url}" target="_blank" rel="noreferrer">Open Actions</a>.`;
+    status.innerHTML = `Workflow triggered for ${payload.template}. <a href="${payload.actions_url}" target="_blank" rel="noreferrer">Open Actions</a>. Refresh this page after the run finishes to see the PDF link.`;
   } catch (error) {
     status.textContent = `Could not trigger CI: ${error.message}`;
   }
 }
 
+async function loadLatestPdf() {
+  const target = document.querySelector("#latestPdf");
+  if (!target) return;
+
+  try {
+    const response = await fetch("generated/latest.json", { cache: "no-store" });
+    if (!response.ok) return;
+    const latest = await response.json();
+    target.innerHTML = `
+      <strong>Latest website PDF</strong>
+      <span>${latest.template} generated ${latest.generated_at}</span>
+      <div class="latest-actions">
+        <a class="button primary" href="${latest.pdf_url}" target="_blank" rel="noreferrer">View PDF</a>
+        <a class="button secondary" href="${latest.pdf_url}" download>Download PDF</a>
+      </div>
+    `;
+  } catch (_) {
+    target.innerHTML = `
+      <strong>Latest website PDF</strong>
+      <span>No PDF has been published to the page yet.</span>
+    `;
+  }
+}
+
 document.querySelector("#downloadJson").addEventListener("click", downloadProfileJson);
 document.querySelector("#triggerCi").addEventListener("click", triggerCiRun);
+loadLatestPdf();

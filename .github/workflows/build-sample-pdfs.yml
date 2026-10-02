@@ -5,25 +5,36 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
-
-permissions:
-  contents: read
-
-jobs:
-  build-sample-pdfs:
-    name: Build ${{ matrix.template }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        template:
+    inputs:
+      template:
+        description: Resume template to build
+        required: true
+        default: template_1
+        type: choice
+        options:
           - template_1
           - template_2
           - maang_1
           - fanng_1
           - europass_1
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  TEMPLATE_NAME: ${{ github.event.inputs.template || 'template_1' }}
+
+jobs:
+  build-sample-pdf:
+    name: Build ${{ github.event.inputs.template || 'template_1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,14 +51,48 @@ jobs:
             texlive-plain-generic
           pdflatex --version
 
-      - name: Build sample PDF
+      - name: Build selected PDF
         shell: pwsh
-        run: ./scripts/build-user-resume.ps1 -Source linkedin -Template '${{ matrix.template }}'
+        run: ./scripts/build-user-resume.ps1 -Source linkedin -Template "$env:TEMPLATE_NAME"
 
-      - name: Upload sample PDF
+      - name: Prepare Pages PDF download
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/generated
+          pdf_path="$(ls -t build/*.pdf | head -n 1)"
+          cp "$pdf_path" "docs/generated/${TEMPLATE_NAME}.pdf"
+          cp "$pdf_path" docs/generated/latest.pdf
+          generated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          cat > docs/generated/latest.json <<EOF
+          {
+            "template": "${TEMPLATE_NAME}",
+            "generated_at": "${generated_at}",
+            "pdf_url": "generated/latest.pdf",
+            "template_pdf_url": "generated/${TEMPLATE_NAME}.pdf"
+          }
+          EOF
+
+      - name: Upload sample PDF artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sample-${{ matrix.template }}
+          name: sample-${{ env.TEMPLATE_NAME }}
           path: build/*.pdf
           if-no-files-found: error
           retention-days: 7
+
+      - name: Configure Pages
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy PDF to GitHub Pages
+        if: github.event_name == 'workflow_dispatch'
+        id: deployment
+        uses: actions/deploy-pages@v4

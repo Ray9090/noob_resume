@@ -172,6 +172,7 @@ Website trigger fields:
 
 - Backend URL: `https://noob-resume-ci-trigger.ray9090.workers.dev`
 - Trigger key: the value saved as Cloudflare secret `CI_TRIGGER_KEY`
+- Template: one template to build for this run
 - Branch: `main`
 
 Never enter `GITHUB_TOKEN` in the website form.
@@ -184,15 +185,17 @@ https://noob-resume-ci-trigger.ray9090.workers.dev
 
 ## GitHub Actions CI
 
-This repository builds sample PDFs with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.
+This repository builds one selected sample PDF with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.
 
-The CI workflow uses a standard GitHub-hosted `ubuntu-latest` runner, installs TeX Live, builds each supported template with `user-resources/linkedin-profile.json`, and uploads the generated PDFs as short-lived workflow artifacts.
+The CI workflow uses a standard GitHub-hosted `ubuntu-latest` runner, installs TeX Live, builds one selected template with `user-resources/linkedin-profile.json`, uploads the generated PDF as a short-lived workflow artifact, and publishes the latest manual-run PDF to GitHub Pages under `generated/latest.pdf`. For the website PDF link to update without committing generated files, GitHub Pages should use the `GitHub Actions` source.
 
 The workflow is intentionally read-only:
 
 - It does not commit generated PDFs.
 - It does not push changes back to the repository.
 - Generated artifacts are retained for 7 days.
+- Manual workflow runs can choose one template: `template_1`, `template_2`, `maang_1`, `fanng_1`, or `europass_1`.
+- The website shows the latest manually generated PDF after the workflow completes and Pages redeploys.
 
 To inspect the CI output, open GitHub -> Actions -> Build Sample PDFs -> latest run -> Artifacts.
 
