@@ -262,7 +262,7 @@ h2 {
 
 .split.reverse { background: var(--soft); }
 
-.command-panel, .steps, .profile-form {
+.command-panel, .steps, .profile-form, .trigger-form {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
@@ -325,14 +325,14 @@ code {
 .steps li { margin-bottom: 12px; }
 .steps li:last-child { margin-bottom: 0; }
 
-.profile-form {
+.profile-form, .trigger-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   padding: 20px;
 }
 
-.profile-form .full, .profile-form .form-actions { grid-column: 1 / -1; }
+.profile-form .full, .profile-form .form-actions, .trigger-form .trigger-status, .trigger-form button { grid-column: 1 / -1; }
 
 .footer {
   display: flex;
@@ -357,10 +357,21 @@ code {
 
 @media (max-width: 640px) {
   .topbar { align-items: flex-start; flex-direction: column; }
-  .template-grid, .profile-form { grid-template-columns: 1fr; }
+  .template-grid, .profile-form, .trigger-form { grid-template-columns: 1fr; }
   .status-strip { grid-template-columns: 1fr; }
   .status-strip div { border-right: 0; border-bottom: 1px solid var(--line); }
   .status-strip div:last-child { border-bottom: 0; }
   .command-box { grid-template-columns: 1fr; }
   h1 { font-size: 42px; }
+}
+
+.trigger-status {
+  min-height: 24px;
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.trigger-status a {
+  color: var(--accent-strong);
+  font-weight: 800;
 }

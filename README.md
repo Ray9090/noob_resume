@@ -154,6 +154,19 @@ To enable it:
 
 The site is static. It documents templates, local build commands, the manual GitHub Actions workflow, and includes a browser-only JSON starter helper. It does not process payments, store user data, or generate PDFs in the browser.
 
+
+## Backend CI Trigger
+
+The GitHub Pages site includes a self-use CI trigger panel. The browser calls a backend API, and the backend triggers GitHub Actions with a GitHub token stored outside the static site.
+
+A Cloudflare Worker starter is included in `backend/cloudflare-worker/`.
+
+Required backend secrets:
+
+- `GITHUB_TOKEN` - fine-grained GitHub token with Actions read/write access to this repository.
+- `CI_TRIGGER_KEY` - private key typed into the website trigger form.
+
+The static site does not store the GitHub token and should never contain repository secrets.
 ## GitHub Actions CI
 
 This repository builds sample PDFs with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.

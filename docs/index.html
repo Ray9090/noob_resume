@@ -17,6 +17,7 @@
       <a href="#templates">Templates</a>
       <a href="#build">Build</a>
       <a href="#ci">CI</a>
+      <a href="#trigger">Trigger</a>
       <a href="#profile">Profile</a>
     </nav>
   </header>
@@ -104,6 +105,21 @@
         <li>Keep branch <strong>main</strong> and start the run.</li>
         <li>Download PDFs from <strong>Artifacts</strong>.</li>
       </ol>
+    </section>
+
+    <section id="trigger" class="section split" aria-labelledby="trigger-title">
+      <div class="section-heading">
+        <p class="eyebrow">Backend Trigger</p>
+        <h2 id="trigger-title">Run CI from this page.</h2>
+        <p>The page calls your backend API. The GitHub token stays on the backend, and this page only sends a short trigger key.</p>
+      </div>
+      <form class="trigger-form" id="triggerForm">
+        <label>Backend URL<input name="endpoint" type="url" placeholder="https://noob-resume-ci.your-subdomain.workers.dev"></label>
+        <label>Trigger key<input name="key" type="password" autocomplete="off" placeholder="Private key from backend secret"></label>
+        <label>Branch<input name="branch" value="main"></label>
+        <button class="button primary" type="button" id="triggerCi">Trigger CI</button>
+        <p class="trigger-status" id="triggerStatus" role="status" aria-live="polite">Backend not configured yet.</p>
+      </form>
     </section>
 
     <section id="profile" class="section" aria-labelledby="profile-title">

@@ -79,4 +79,38 @@ templateSelect.addEventListener("change", updateCommand);
 document.querySelectorAll("[data-copy]").forEach((button) => {
   button.addEventListener("click", () => copyText(button.dataset.copy, button));
 });
+async function triggerCiRun() {
+  const form = document.querySelector("#triggerForm");
+  const status = document.querySelector("#triggerStatus");
+  const data = new FormData(form);
+  const endpoint = (data.get("endpoint") || "").trim().replace(/\/$/, "");
+  const key = (data.get("key") || "").trim();
+  const branch = (data.get("branch") || "main").trim();
+
+  if (!endpoint || !key) {
+    status.textContent = "Enter the backend URL and trigger key.";
+    return;
+  }
+
+  status.textContent = "Triggering GitHub Actions...";
+  try {
+    const response = await fetch(`${endpoint}/trigger-ci`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Noob-Trigger-Key": key
+      },
+      body: JSON.stringify({ ref: branch })
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.error || `Request failed with ${response.status}`);
+    }
+    status.innerHTML = `Workflow triggered. <a href="${payload.actions_url}" target="_blank" rel="noreferrer">Open Actions</a>.`;
+  } catch (error) {
+    status.textContent = `Could not trigger CI: ${error.message}`;
+  }
+}
+
 document.querySelector("#downloadJson").addEventListener("click", downloadProfileJson);
+document.querySelector("#triggerCi").addEventListener("click", triggerCiRun);

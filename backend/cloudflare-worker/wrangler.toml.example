@@ -1,0 +1,10 @@
+name = "noob-resume-ci-trigger"
+main = "worker.js"
+compatibility_date = "2026-10-02"
+
+[vars]
+GITHUB_OWNER = "Ray9090"
+GITHUB_REPO = "noob_resume"
+GITHUB_WORKFLOW = "build-sample-pdfs.yml"
+GITHUB_REF = "main"
+ALLOWED_ORIGIN = "https://ray9090.github.io"
