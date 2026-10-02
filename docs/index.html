@@ -111,14 +111,19 @@
       <div class="section-heading">
         <p class="eyebrow">Backend Trigger</p>
         <h2 id="trigger-title">Run CI from this page.</h2>
-        <p>The page calls your backend API. The GitHub token stays on the backend, and this page only sends a short trigger key.</p>
+        <p>The page calls your Cloudflare Worker backend. The GitHub token stays on Cloudflare, and this page only sends the private CI trigger key.</p>
+        <div class="trigger-help">
+          <strong>Backend URL</strong>
+          <code>https://noob-resume-ci-trigger.ray9090.workers.dev</code>
+          <span>Use the same <code>CI_TRIGGER_KEY</code> value you added with <code>wrangler secret put CI_TRIGGER_KEY</code>. Do not enter your GitHub token here.</span>
+        </div>
       </div>
       <form class="trigger-form" id="triggerForm">
         <label>Backend URL<input name="endpoint" type="url" value="https://noob-resume-ci-trigger.ray9090.workers.dev" placeholder="https://noob-resume-ci-trigger.ray9090.workers.dev"></label>
-        <label>Trigger key<input name="key" type="password" autocomplete="off" placeholder="Private key from backend secret"></label>
+        <label>CI_TRIGGER_KEY<input name="key" type="password" autocomplete="off" placeholder="Enter Cloudflare CI_TRIGGER_KEY"></label>
         <label>Branch<input name="branch" value="main"></label>
         <button class="button primary" type="button" id="triggerCi">Trigger CI</button>
-        <p class="trigger-status" id="triggerStatus" role="status" aria-live="polite">Backend URL is configured. Enter your trigger key and run CI.</p>
+        <p class="trigger-status" id="triggerStatus" role="status" aria-live="polite">Enter your CI_TRIGGER_KEY and click Trigger CI.</p>
       </form>
     </section>
 

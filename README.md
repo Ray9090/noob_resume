@@ -168,6 +168,14 @@ Required backend secrets:
 
 The static site does not store the GitHub token and should never contain repository secrets.
 
+Website trigger fields:
+
+- Backend URL: `https://noob-resume-ci-trigger.ray9090.workers.dev`
+- Trigger key: the value saved as Cloudflare secret `CI_TRIGGER_KEY`
+- Branch: `main`
+
+Never enter `GITHUB_TOKEN` in the website form.
+
 Deployed Worker URL:
 
 ```text

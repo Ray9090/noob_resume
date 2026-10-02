@@ -375,3 +375,23 @@ code {
   color: var(--accent-strong);
   font-weight: 800;
 }
+
+.trigger-help {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.trigger-help strong {
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.trigger-help span {
+  color: var(--muted);
+  font-size: 14px;
+}
