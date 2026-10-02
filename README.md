@@ -167,6 +167,13 @@ Required backend secrets:
 - `CI_TRIGGER_KEY` - private key typed into the website trigger form.
 
 The static site does not store the GitHub token and should never contain repository secrets.
+
+Deployed Worker URL:
+
+```text
+https://noob-resume-ci-trigger.ray9090.workers.dev
+```
+
 ## GitHub Actions CI
 
 This repository builds sample PDFs with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.

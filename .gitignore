@@ -9,3 +9,5 @@ AGENTS.md
 *.synctex.gz
 build/
 reference_resources/
+backend/cloudflare-worker/wrangler.toml
+backend/cloudflare-worker/.wrangler/

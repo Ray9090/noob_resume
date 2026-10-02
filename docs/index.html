@@ -114,11 +114,11 @@
         <p>The page calls your backend API. The GitHub token stays on the backend, and this page only sends a short trigger key.</p>
       </div>
       <form class="trigger-form" id="triggerForm">
-        <label>Backend URL<input name="endpoint" type="url" placeholder="https://noob-resume-ci.your-subdomain.workers.dev"></label>
+        <label>Backend URL<input name="endpoint" type="url" value="https://noob-resume-ci-trigger.ray9090.workers.dev" placeholder="https://noob-resume-ci-trigger.ray9090.workers.dev"></label>
         <label>Trigger key<input name="key" type="password" autocomplete="off" placeholder="Private key from backend secret"></label>
         <label>Branch<input name="branch" value="main"></label>
         <button class="button primary" type="button" id="triggerCi">Trigger CI</button>
-        <p class="trigger-status" id="triggerStatus" role="status" aria-live="polite">Backend not configured yet.</p>
+        <p class="trigger-status" id="triggerStatus" role="status" aria-live="polite">Backend URL is configured. Enter your trigger key and run CI.</p>
       </form>
     </section>
 
