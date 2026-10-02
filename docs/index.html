@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Noob Resume builds selectable LaTeX resume templates from reusable profile data.">
+  <title>Noob Resume</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Noob Resume home">
+      <span class="brand-mark">NR</span>
+      <span>Noob Resume</span>
+    </a>
+    <nav class="nav" aria-label="Primary navigation">
+      <a href="#templates">Templates</a>
+      <a href="#build">Build</a>
+      <a href="#ci">CI</a>
+      <a href="#profile">Profile</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">LaTeX resume automation</p>
+        <h1 id="hero-title">Build clean resume PDFs from one profile file.</h1>
+        <p class="hero-text">Pick a template, keep profile data in JSON, compile locally or through GitHub Actions, and download generated PDFs without committing build output.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="https://github.com/Ray9090/noob_resume/actions/workflows/build-sample-pdfs.yml">Run CI</a>
+          <a class="button secondary" href="https://github.com/Ray9090/noob_resume">View Repo</a>
+        </div>
+      </div>
+      <div class="resume-preview" aria-label="Resume preview illustration">
+        <div class="preview-paper">
+          <div class="preview-name"></div>
+          <div class="preview-contact"></div>
+          <div class="preview-section wide"></div>
+          <div class="preview-lines">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="preview-section"></div>
+          <div class="preview-job">
+            <b></b><i></i>
+            <span></span><span></span><span></span>
+          </div>
+          <div class="preview-job compact">
+            <b></b><i></i>
+            <span></span><span></span>
+          </div>
+          <div class="preview-section short"></div>
+          <div class="preview-skills"><span></span><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="status-strip" aria-label="Project status">
+      <div><strong>5</strong><span>templates</span></div>
+      <div><strong>CI</strong><span>GitHub Actions</span></div>
+      <div><strong>JSON</strong><span>profile source</span></div>
+      <div><strong>PDF</strong><span>artifact output</span></div>
+    </section>
+
+    <section id="templates" class="section" aria-labelledby="templates-title">
+      <div class="section-heading">
+        <p class="eyebrow">Template Library</p>
+        <h2 id="templates-title">Choose the layout before build time.</h2>
+      </div>
+      <div class="template-grid" id="templateGrid"></div>
+    </section>
+
+    <section id="build" class="section split" aria-labelledby="build-title">
+      <div class="section-heading">
+        <p class="eyebrow">Local Build</p>
+        <h2 id="build-title">Compile from your machine.</h2>
+        <p>Use these commands from the repository root after LaTeX setup is complete.</p>
+      </div>
+      <div class="command-panel">
+        <label for="templateSelect">Template</label>
+        <select id="templateSelect"></select>
+        <div class="command-box">
+          <code id="buildCommand">scripts\build-user-resume.cmd linkedin template_1</code>
+          <button class="icon-button" type="button" data-copy="buildCommand" aria-label="Copy build command" title="Copy build command">Copy</button>
+        </div>
+        <div class="command-box">
+          <code id="setupCommand">scripts\setup-latex.cmd</code>
+          <button class="icon-button" type="button" data-copy="setupCommand" aria-label="Copy setup command" title="Copy setup command">Copy</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="ci" class="section split reverse" aria-labelledby="ci-title">
+      <div class="section-heading">
+        <p class="eyebrow">GitHub Actions</p>
+        <h2 id="ci-title">Trigger PDF builds from GitHub.</h2>
+        <p>The workflow compiles every template with <code>user-resources/linkedin-profile.json</code> and uploads PDFs as short-lived artifacts.</p>
+      </div>
+      <ol class="steps">
+        <li>Open the repository on GitHub.</li>
+        <li>Go to <strong>Actions</strong>.</li>
+        <li>Select <strong>Build Sample PDFs</strong>.</li>
+        <li>Click <strong>Run workflow</strong>.</li>
+        <li>Keep branch <strong>main</strong> and start the run.</li>
+        <li>Download PDFs from <strong>Artifacts</strong>.</li>
+      </ol>
+    </section>
+
+    <section id="profile" class="section" aria-labelledby="profile-title">
+      <div class="section-heading">
+        <p class="eyebrow">Profile Helper</p>
+        <h2 id="profile-title">Draft profile JSON in the browser.</h2>
+        <p>This helper creates a small starter JSON file. It does not upload or save your data anywhere.</p>
+      </div>
+      <form class="profile-form" id="profileForm">
+        <label>Name<input name="name" autocomplete="name" placeholder="Md Mozammel Hossain"></label>
+        <label>Email<input name="email" autocomplete="email" placeholder="name@example.com"></label>
+        <label>LinkedIn<input name="linkedin" placeholder="https://www.linkedin.com/in/..."></label>
+        <label>GitHub<input name="github" placeholder="https://github.com/..."></label>
+        <label class="full">Summary<textarea name="summary" rows="4" placeholder="Short professional summary"></textarea></label>
+        <div class="form-actions">
+          <button class="button primary" type="button" id="downloadJson">Download JSON</button>
+          <button class="button secondary" type="reset">Reset</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Noob Resume</span>
+    <a href="https://github.com/Ray9090/noob_resume">GitHub</a>
+    <a href="https://github.com/Ray9090/noob_resume/actions">Actions</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

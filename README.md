@@ -138,6 +138,21 @@ Overleaf template link:
 ```
 
 
+
+## GitHub Pages Website
+
+The static project website lives in `docs/` and can be hosted with GitHub Pages.
+
+To enable it:
+
+1. Open the repository on GitHub.
+2. Go to `Settings` -> `Pages`.
+3. Set source to `Deploy from a branch`.
+4. Select branch `main` and folder `/docs`.
+5. Save and wait for GitHub Pages to publish the site.
+
+The site is static. It documents templates, local build commands, the manual GitHub Actions workflow, and includes a browser-only JSON starter helper. It does not process payments, store user data, or generate PDFs in the browser.
+
 ## GitHub Actions CI
 
 This repository builds sample PDFs with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.
