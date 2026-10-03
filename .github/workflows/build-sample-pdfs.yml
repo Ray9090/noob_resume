@@ -42,21 +42,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install TeX Live
+      - name: Pull TeX Live image
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            texlive-latex-base \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-fonts-recommended \
-            texlive-fonts-extra \
-            texlive-plain-generic
-          pdflatex --version
+          docker pull texlive/texlive:latest
 
-      - name: Build selected PDF
+      - name: Generate selected resume source
         shell: pwsh
-        run: ./scripts/build-user-resume.ps1 -Source linkedin -Template "$env:TEMPLATE_NAME"
+        run: ./scripts/build-user-resume.ps1 -Source linkedin -Template "$env:TEMPLATE_NAME" -NoCompile
+
+      - name: Build selected PDF with TeX Live container
+        shell: bash
+        run: |
+          set -euo pipefail
+          job_name="$(cat build/job-name.txt)"
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work/build \
+            texlive/texlive:latest \
+            sh -lc "pdflatex -interaction=nonstopmode -jobname=\"$job_name\" custom_resume_template.tex && pdflatex -interaction=nonstopmode -jobname=\"$job_name\" custom_resume_template.tex"
 
       - name: Prepare Pages PDF download
         if: github.event_name == 'workflow_dispatch'
