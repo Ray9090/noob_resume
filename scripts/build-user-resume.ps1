@@ -2,8 +2,7 @@ param(
     [ValidateSet("user-info", "linkedin", "linkedin-pdf")]
     [string]$Source = "user-info",
     [string]$Template = "template_1.tex",
-    [string]$LinkedInPdf = "",
-    [switch]$NoCompile
+    [string]$LinkedInPdf = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -597,7 +596,7 @@ function ConvertTo-EuropassLinkedInContent {
     $lines += "% <NOOB_CONTENT_END>"
     return $lines -join [Environment]::NewLine
 }
-if (-not $NoCompile -and -not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
+if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
     throw "pdflatex is not installed or not available in PATH. Run: powershell -ExecutionPolicy Bypass -File scripts/setup-latex.ps1"
 }
 
@@ -730,21 +729,18 @@ if ($Source -in @("linkedin", "linkedin-pdf")) {
     }
 }
 Set-Content -Path $generatedTemplate -Value $generatedContent -NoNewline
-Set-Content -Path (Join-Path $outputDir "job-name.txt") -Value $jobName -NoNewline
 
-if (-not $NoCompile) {
-    Push-Location $outputDir
-    try {
-        for ($run = 1; $run -le 2; $run++) {
-            pdflatex -interaction=nonstopmode -jobname="$jobName" custom_resume_template.tex
-            if ($LASTEXITCODE -ne 0) {
-                throw "pdflatex failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
-            }
+Push-Location $outputDir
+try {
+    for ($run = 1; $run -le 2; $run++) {
+        pdflatex -interaction=nonstopmode -jobname="$jobName" custom_resume_template.tex
+        if ($LASTEXITCODE -ne 0) {
+            throw "pdflatex failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
         }
     }
-    finally {
-        Pop-Location
-    }
+}
+finally {
+    Pop-Location
 }
 
 Write-Host "==> Source: $Source"
@@ -755,9 +751,4 @@ if ($Source -eq "linkedin-pdf") {
     Write-Host "==> Generated LinkedIn profile data at build/linkedin-profile.generated.json"
 }
 Write-Host "==> Generated build/custom_resume_template.tex from resume-template/$Template"
-if ($NoCompile) {
-    Write-Host "==> Skipped PDF compile. Job name written to build/job-name.txt"
-}
-else {
-    Write-Host "==> User resume PDF built at build/$jobName.pdf"
-}
+Write-Host "==> User resume PDF built at build/$jobName.pdf"

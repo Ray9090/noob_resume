@@ -187,7 +187,7 @@ https://noob-resume-ci-trigger.ray9090.workers.dev
 
 This repository builds one selected sample PDF with GitHub Actions on pushes to `main`, pull requests, and manual workflow runs from the Actions tab.
 
-The CI workflow uses a standard GitHub-hosted `ubuntu-latest` runner. PowerShell generates one selected template from `user-resources/linkedin-profile.json`, a prebuilt TeX Live Docker image compiles the PDF, the generated PDF is uploaded as a short-lived workflow artifact, and the latest manual-run PDF is published to GitHub Pages under `generated/latest.pdf`. For the website PDF link to update without committing generated files, GitHub Pages should use the `GitHub Actions` source.
+The CI workflow uses a standard GitHub-hosted `ubuntu-latest` runner with cached TinyTeX. PowerShell builds one selected template from `user-resources/linkedin-profile.json`, TinyTeX compiles the PDF, the generated PDF is uploaded as a short-lived workflow artifact, and the latest manual-run PDF is published to GitHub Pages under `generated/latest.pdf`. For the website PDF link to update without committing generated files, GitHub Pages should use the `GitHub Actions` source.
 
 The workflow is intentionally read-only:
 
