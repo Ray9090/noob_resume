@@ -68,26 +68,36 @@ jobs:
             amsfonts \
             babel \
             babel-english \
+            clearsans \
             enumitem \
             europasscv \
             fancyhdr \
+            fontawesome \
             fontawesome5 \
+            fontspec \
             graphics \
+            geometry \
             hyperref \
             latex-bin \
             latexconfig \
             ltxcmds \
             marvosym \
+            multirow \
+            parskip \
             pgf \
             preprint \
             ragged2e \
             setspace \
             soul \
             titlesec \
+            tcolorbox \
+            textpos \
             tools \
             url \
+            xargs \
             xcolor
           pdflatex --version
+          lualatex --version
 
       - name: Build selected PDF
         shell: pwsh

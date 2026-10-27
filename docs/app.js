@@ -4,7 +4,7 @@ const templates = [
   { id: "maang_1", name: "MAANG 1", type: "Engineering", badge: "ats", description: "Compact engineering-focused layout inspired by high-signal SWE resumes." },
   { id: "fanng_1", name: "FANNG 1", type: "Engineering", badge: "ats", description: "A focused resume shape for technical roles and quick recruiter scanning." },
   { id: "europass_1", name: "Europass 1", type: "Europass", badge: "europass", description: "Europass-style layout with a dedicated renderer and section order." },
-  { id: "rayhan_template", name: "Rayhan Template", type: "ATS", badge: "ats", description: "Separate template slot, currently using the Template 1 layout and fictional sample content." }
+  { id: "rayhan_template", name: "Rayhan Template", type: "Two-column", badge: "ats", description: "Blue-accented CV with a grey skills sidebar and dedicated experience column." }
 ];
 
 const endpoint = "https://noob-resume-ci-trigger.ray9090.workers.dev";

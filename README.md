@@ -53,7 +53,8 @@ The ready-made layout lives in `resume-template/template_1.tex`. It contains its
 - `user-resources/linkedin-profile.example.json` - tracked example for LinkedIn-style profile data.
 - `user-resources/linkedin-profile.json` - tracked curated profile JSON used by the `linkedin` build source.
 - `resume-template/template_1.tex` - standalone ready-made Noob ATS Resume template with sample contact details.
-- `resume-template/rayhan_template.tex` - standalone sample template; currently the same layout as `template_1.tex`, with fictional content and no required images.
+- `resume-template/rayhan_template.tex` - Arthur-style two-column CV with a grey sidebar, blue headings, fictional sample data, and no required image.
+- `resume-template/arthur-cv.cls` and `resume-template/ARTHUR-CV-LICENSE.txt` - vendored [Arthur CV](https://github.com/ArthurBernard/Arthur-CV-LaTeX) class and its MIT license.
 - `user-resources/rayhan_user/` - local personal images, ignored by Git and not used by CI.
 - `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 - `build/profile-info.tex` - generated during LinkedIn-source builds; do not edit or commit it.
@@ -84,6 +85,8 @@ When more layouts are added later, each ready-made layout should live in `resume
 ```
 
 The custom build replaces the profile block with the selected source at build time. For the `linkedin` source, it also replaces the marked resume body with generated summary, skills, experience, optional projects, and education sections from `user-resources/linkedin-profile.json`. No permanent custom template file is required.
+
+`rayhan_template.tex` retains the Arthur CV layout during customization. Its dedicated renderer puts education and skills in the grey sidebar and summary, experience, and projects in the main column. Long profiles use explicit continuation pages because the class positions the two columns absolutely. The ready-made template contains fictional sample data; no personal photo or source in `user-resources/rayhan_user/` is published. To include a photo **only in a local build**, set `NOOB_RESUME_PHOTO` to a JPEG, PNG, or PDF inside `user-resources/` before running the command; alternatively set `photoPath` in the profile JSON only if you intend to publish that image with CI output. This template requires **LuaLaTeX** plus the Arthur class dependencies (`ClearSans`, Font Awesome 4, `tcolorbox`, `textpos`, `xargs`, and standard LaTeX packages). Other templates continue to use `pdflatex`. If an unusually long entry is clipped by the absolute column layout, shorten that entry in the JSON and rebuild.
 
 To list and build ready-made templates from `resume-template/`:
 
