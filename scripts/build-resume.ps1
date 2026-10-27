@@ -20,13 +20,14 @@ if ([System.IO.Path]::GetExtension($Template) -eq "") {
 $templateFile = Join-Path $templateDir $Template
 $outputDir = Join-Path $repoRoot "build"
 
-if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
-    throw "pdflatex is not installed or not available in PATH. Run: powershell -ExecutionPolicy Bypass -File scripts/setup-latex.ps1"
-}
-
 if (-not (Test-Path $templateFile)) {
     $availableTemplates = Get-ChildItem $templateDir -Filter "*.tex" | ForEach-Object { $_.Name }
     throw "Template file not found: $templateFile. Available templates: $($availableTemplates -join ', ')"
+}
+$templateContent = Get-Content -Raw $templateFile
+$latexEngine = if ($templateContent -match '\\documentclass(?:\[[^]]*\])?\{arthur-cv\}') { 'lualatex' } else { 'pdflatex' }
+if (-not (Get-Command $latexEngine -ErrorAction SilentlyContinue)) {
+    throw "$latexEngine is not installed or not available in PATH. Run: scripts/setup-latex.cmd"
 }
 
 $templateBaseName = [System.IO.Path]::GetFileNameWithoutExtension($Template)
@@ -43,9 +44,9 @@ New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 Push-Location $templateDir
 try {
     for ($run = 1; $run -le 2; $run++) {
-        pdflatex -interaction=nonstopmode -jobname="$jobName" -output-directory="$outputDir" $Template
+        & $latexEngine -interaction=nonstopmode -halt-on-error -jobname="$jobName" -output-directory="$outputDir" $Template
         if ($LASTEXITCODE -ne 0) {
-            throw "pdflatex failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
+            throw "$latexEngine failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
         }
     }
 }

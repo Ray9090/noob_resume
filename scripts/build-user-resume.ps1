@@ -497,6 +497,25 @@ function Add-EuropassItemList {
     return $lines
 }
 
+function Get-ProfileUrlPath {
+    param([string]$Url, [string]$Domain, [string]$Prefix)
+
+    $uri = $null
+    if (-not [Uri]::TryCreate($Url, [UriKind]::Absolute, [ref]$uri)) { return "" }
+    if ($uri.Scheme -ne 'https' -and $uri.Scheme -ne 'http') { return "" }
+    if ($uri.Host -notin @($Domain, "www.$Domain")) { return "" }
+    $path = $uri.AbsolutePath.TrimEnd('/')
+    if (-not $path.StartsWith($Prefix, [StringComparison]::OrdinalIgnoreCase)) { return "" }
+    return $path
+}
+
+function Get-UserInfoValue {
+    param([string]$Content, [string]$Name)
+    $match = [regex]::Match($Content, "\\newcommand\{\\$Name\}\{([^}]*)\}")
+    if ($match.Success) { return $match.Groups[1].Value }
+    return ""
+}
+
 function ConvertTo-EuropassLinkedInContent {
     param($Profile, [string]$SourceLabel)
 
@@ -596,10 +615,6 @@ function ConvertTo-EuropassLinkedInContent {
     $lines += "% <NOOB_CONTENT_END>"
     return $lines -join [Environment]::NewLine
 }
-if (-not (Get-Command pdflatex -ErrorAction SilentlyContinue)) {
-    throw "pdflatex is not installed or not available in PATH. Run: powershell -ExecutionPolicy Bypass -File scripts/setup-latex.ps1"
-}
-
 if (-not (Test-Path $sourceTemplate)) {
     $availableTemplates = Get-ChildItem $templateDir -Filter "*.tex" | ForEach-Object { $_.Name }
     throw "Template file not found: $sourceTemplate. Available templates: $($availableTemplates -join ', ')"
@@ -684,12 +699,53 @@ $templateContent = Get-Content -Raw $sourceTemplate
 if ([string]::IsNullOrWhiteSpace($templateContent)) {
     throw "Template file is empty: $sourceTemplate. Add LaTeX content and the required NOOB_PROFILE/NOOB_CONTENT markers before building from profile data."
 }
+$isArthurTemplate = $templateContent -match '\\documentclass(?:\[[^]]*\])?\{arthur-cv\}'
+$latexEngine = if ($isArthurTemplate) { 'lualatex' } else { 'pdflatex' }
+if (-not (Get-Command $latexEngine -ErrorAction SilentlyContinue)) {
+    throw "$latexEngine is not installed or not available in PATH. Run: scripts/setup-latex.cmd"
+}
+if ($isArthurTemplate) {
+    $arthurClass = Join-Path $templateDir 'arthur-cv.cls'
+    if (-not (Test-Path $arthurClass)) { throw "Arthur CV class not found: $arthurClass" }
+    Copy-Item -LiteralPath $arthurClass -Destination (Join-Path $outputDir 'arthur-cv.cls') -Force
+    $arthurRenderer = [scriptblock]::Create((Get-Content -Raw (Join-Path $scriptRoot 'render-arthur-profile.ps1')))
+    . $arthurRenderer
+
+    $photoInput = $env:NOOB_RESUME_PHOTO
+    if ([string]::IsNullOrWhiteSpace($photoInput) -and $linkedInProfile -and $linkedInProfile.photoPath) {
+        $photoInput = [string]$linkedInProfile.photoPath
+    }
+    $photoName = ''
+    if (-not [string]::IsNullOrWhiteSpace($photoInput)) {
+        $resourceRoot = [System.IO.Path]::GetFullPath((Join-Path $repoRoot 'user-resources'))
+        $photoPath = if ([System.IO.Path]::IsPathRooted($photoInput)) { [System.IO.Path]::GetFullPath($photoInput) } else { [System.IO.Path]::GetFullPath((Join-Path $repoRoot $photoInput)) }
+        if (-not $photoPath.StartsWith($resourceRoot + [System.IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Photo must be a local file inside user-resources/.'
+        }
+        if (-not (Test-Path -LiteralPath $photoPath -PathType Leaf)) { throw "Photo not found: $photoPath" }
+        $extension = [System.IO.Path]::GetExtension($photoPath).ToLowerInvariant()
+        if ($extension -notin @('.jpg', '.jpeg', '.png', '.pdf')) { throw 'Photo must be JPEG, PNG, or PDF.' }
+        $photoName = "resume-photo$extension"
+        Copy-Item -LiteralPath $photoPath -Destination (Join-Path $outputDir $photoName) -Force
+    }
+}
 $profilePattern = "(?s)% <NOOB_PROFILE_START>.*?% <NOOB_PROFILE_END>"
 $contentPattern = "(?s)% <NOOB_CONTENT_START>.*?% <NOOB_CONTENT_END>"
 $profileReplacement = "% User-editable profile variables."
 
 if ($Source -eq "user-info") {
     $profileReplacement += [Environment]::NewLine + "\input{../user-resources/user-info.tex}"
+    if ($isArthurTemplate) {
+        $rawInfo = Get-Content -Raw $userInfoFile
+        $linkedInPath = Get-ProfileUrlPath (Get-UserInfoValue $rawInfo 'ResumeLinkedInUrl') 'linkedin.com' '/in/'
+        $githubPath = Get-ProfileUrlPath (Get-UserInfoValue $rawInfo 'ResumeGitHubUrl') 'github.com' '/'
+        $githubHandle = $githubPath.TrimStart('/').Split('/')[0]
+        $profileReplacement += [Environment]::NewLine + "\newcommand{\ResumeLinkedInPath}{$(ConvertTo-LatexValue $linkedInPath)}"
+        $profileReplacement += [Environment]::NewLine + "\newcommand{\ResumeGitHubHandle}{$(ConvertTo-LatexValue $githubHandle)}"
+        $profileReplacement += [Environment]::NewLine + '\newcommand{\ResumeJobTitle}{Software Engineer}'
+        $profileReplacement += [Environment]::NewLine + '\newcommand{\ResumeAddress}{}'
+        $profileReplacement += [Environment]::NewLine + "\newcommand{\ResumePhotoPath}{$photoName}"
+    }
 }
 else {
     $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { $linkedInProfileSourceLabel }
@@ -704,6 +760,19 @@ else {
         "\newcommand{\ResumeGitHubDisplay}{$(ConvertTo-LatexValue $linkedInProfile.githubDisplay)}",
         "\newcommand{\ResumeGitHubUrl}{$(ConvertTo-LatexValue $linkedInProfile.githubUrl)}"
     )
+    if ($isArthurTemplate) {
+        $linkedInPath = Get-ProfileUrlPath $linkedInProfile.linkedinUrl 'linkedin.com' '/in/'
+        $githubPath = Get-ProfileUrlPath $linkedInProfile.githubUrl 'github.com' '/'
+        $githubHandle = $githubPath.TrimStart('/').Split('/')[0]
+        $firstRole = @($linkedInProfile.experience) | Select-Object -First 1
+        $jobTitle = if ($firstRole) { $firstRole.title } else { '' }
+        $address = if ($firstRole) { $firstRole.location } else { '' }
+        $profileLines += "\newcommand{\ResumeLinkedInPath}{$(ConvertTo-LatexValue $linkedInPath)}"
+        $profileLines += "\newcommand{\ResumeGitHubHandle}{$(ConvertTo-LatexValue $githubHandle)}"
+        $profileLines += "\newcommand{\ResumeJobTitle}{$(ConvertTo-LatexValue $jobTitle)}"
+        $profileLines += "\newcommand{\ResumeAddress}{$(ConvertTo-LatexValue $address)}"
+        $profileLines += "\newcommand{\ResumePhotoPath}{$photoName}"
+    }
     Set-Content -Path $generatedProfile -Value ($profileLines -join [Environment]::NewLine) -NoNewline
     $profileReplacement += [Environment]::NewLine + "\input{profile-info.tex}"
 }
@@ -720,7 +789,7 @@ if ($Source -in @("linkedin", "linkedin-pdf")) {
 
     $sourceLabel = if ($Source -eq "linkedin-pdf") { "build/linkedin-profile.generated.json" } else { $linkedInProfileSourceLabel }
     $isEuropassTemplate = $templateContent -match "\\documentclass\[[^]]*\]\{europasscv\}|\\documentclass\{europasscv\}"
-    $replacementContent = if ($isEuropassTemplate) { ConvertTo-EuropassLinkedInContent $linkedInProfile $sourceLabel } else { ConvertTo-LinkedInContent $linkedInProfile $sourceLabel }
+    $replacementContent = if ($isArthurTemplate) { ConvertTo-ArthurLinkedInContent $linkedInProfile $sourceLabel } elseif ($isEuropassTemplate) { ConvertTo-EuropassLinkedInContent $linkedInProfile $sourceLabel } else { ConvertTo-LinkedInContent $linkedInProfile $sourceLabel }
     $generatedContent = [regex]::Replace($generatedContent, $contentPattern, $replacementContent)
 
     if ([string]::IsNullOrWhiteSpace([string]$linkedInProfile.phoneDisplay)) {
@@ -733,9 +802,9 @@ Set-Content -Path $generatedTemplate -Value $generatedContent -NoNewline
 Push-Location $outputDir
 try {
     for ($run = 1; $run -le 2; $run++) {
-        pdflatex -interaction=nonstopmode -jobname="$jobName" custom_resume_template.tex
+        & $latexEngine -interaction=nonstopmode -halt-on-error -jobname="$jobName" custom_resume_template.tex
         if ($LASTEXITCODE -ne 0) {
-            throw "pdflatex failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
+            throw "$latexEngine failed with exit code $LASTEXITCODE on run $run. Check build/$jobName.log for details."
         }
     }
 }
