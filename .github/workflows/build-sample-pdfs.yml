@@ -17,6 +17,7 @@ on:
           - maang_1
           - fanng_1
           - europass_1
+          - rayhan_template
 
 permissions:
   contents: read
