@@ -53,6 +53,8 @@ The ready-made layout lives in `resume-template/template_1.tex`. It contains its
 - `user-resources/linkedin-profile.example.json` - tracked example for LinkedIn-style profile data.
 - `user-resources/linkedin-profile.json` - tracked curated profile JSON used by the `linkedin` build source.
 - `resume-template/template_1.tex` - standalone ready-made Noob ATS Resume template with sample contact details.
+- `resume-template/rayhan_template.tex` - standalone sample template; currently the same layout as `template_1.tex`, with fictional content and no required images.
+- `user-resources/rayhan_user/` - local personal images, ignored by Git and not used by CI.
 - `build/custom_resume_template.tex` - generated during the custom build; do not edit or commit it.
 - `build/profile-info.tex` - generated during LinkedIn-source builds; do not edit or commit it.
 - `build/linkedin-profile.bbox.html` - generated coordinate-aware PDF extraction from `pdftotext -bbox-layout`; useful for parser debugging.
@@ -89,6 +91,7 @@ To list and build ready-made templates from `resume-template/`:
 scripts\build-resume.cmd templates
 scripts\build-resume.cmd template_1.tex
 scripts\build-resume.cmd template_2.tex
+scripts\build-resume.cmd rayhan_template.tex
 ```
 
 To build the customized resume from a selected ready-made template plus `user-resources/user-info.tex`:
@@ -97,6 +100,7 @@ To build the customized resume from a selected ready-made template plus `user-re
 scripts\build-user-resume.cmd templates
 scripts\build-user-resume.cmd user-info template_1.tex
 scripts\build-user-resume.cmd user-info template_2.tex
+scripts\build-user-resume.cmd user-info rayhan_template.tex
 ```
 
 To build from `user-resources/linkedin-profile.json` and a selected template:
@@ -104,6 +108,7 @@ To build from `user-resources/linkedin-profile.json` and a selected template:
 ```powershell
 scripts\build-user-resume.cmd linkedin template_1.tex
 scripts\build-user-resume.cmd linkedin template_2.tex
+scripts\build-user-resume.cmd linkedin rayhan_template.tex
 ```
 
 To build from a LinkedIn profile PDF saved by the user and a selected template:
@@ -152,7 +157,7 @@ To enable it:
 5. Run the workflow manually or push a change under `docs/`.
 6. Wait for the workflow to publish the site.
 
-The site is static. It documents templates, local build commands, the manual GitHub Actions workflow, and includes a browser-only JSON starter helper. It does not process payments, store user data, or generate PDFs in the browser.
+The site is static. It lists templates and lets you trigger a cloud PDF build through the Cloudflare Worker. It does not process payments or store profile data in the browser.
 
 
 ## Backend CI Trigger
@@ -168,12 +173,12 @@ Required backend secrets:
 
 The static site does not store the GitHub token and should never contain repository secrets.
 
-Website trigger fields:
+Website build fields:
 
-- Backend URL: `https://noob-resume-ci-trigger.ray9090.workers.dev`
 - Trigger key: the value saved as Cloudflare secret `CI_TRIGGER_KEY`
 - Template: one template to build for this run
-- Branch: `main`
+
+The site uses `https://noob-resume-ci-trigger.ray9090.workers.dev` and the `main` branch.
 
 Never enter `GITHUB_TOKEN` in the website form.
 
@@ -194,7 +199,8 @@ The workflow is intentionally read-only:
 - It does not commit generated PDFs.
 - It does not push changes back to the repository.
 - Generated artifacts are retained for 7 days.
-- Manual workflow runs can choose one template: `template_1`, `template_2`, `maang_1`, `fanng_1`, or `europass_1`.
+- Manual workflow runs can choose one template: `template_1`, `template_2`, `maang_1`, `fanng_1`, `europass_1`, or `rayhan_template`.
+- For `rayhan_template`, choose it in the website selector or in Actions -> Build Sample PDFs -> Run workflow. CI uses the tracked `user-resources/linkedin-profile.json` and publishes the generated PDF to the website.
 - The website shows the latest manually generated PDF after the workflow completes and Pages redeploys.
 
 To inspect the CI output, open GitHub -> Actions -> Build Sample PDFs -> latest run -> Artifacts.

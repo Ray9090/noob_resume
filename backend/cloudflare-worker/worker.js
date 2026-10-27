@@ -1,5 +1,5 @@
 const DEFAULT_WORKFLOW = "build-sample-pdfs.yml";
-const ALLOWED_TEMPLATES = new Set(["template_1", "template_2", "maang_1", "fanng_1", "europass_1"]);
+const ALLOWED_TEMPLATES = new Set(["template_1", "template_2", "maang_1", "fanng_1", "europass_1", "rayhan_template"]);
 
 function jsonResponse(body, status = 200, corsHeaders = {}) {
   return new Response(JSON.stringify(body), {

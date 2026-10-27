@@ -41,7 +41,7 @@ POST /trigger-ci
 X-Noob-Trigger-Key: <your trigger key>
 Content-Type: application/json
 
-{"ref":"main"}
+{"ref":"main","template":"rayhan_template"}
 ```
 
 The Worker calls GitHub's workflow dispatch API for `.github/workflows/build-sample-pdfs.yml`.
